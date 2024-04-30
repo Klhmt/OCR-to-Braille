@@ -9,6 +9,9 @@ def separe_en_lignes(image_binary : np, taux=0.98) -> list :
                   Sépare ensuite  les lignes de pixels en fonction de leur taux. 
                   On regarde dans la liste des indices des pixels blancs et si on observe un 'saut', c'est que des lignes de pixels de texte sont là
                   On stocke donc ces indices, qui correspondent aux indices des lignes de pixel contenant du texte
+                  
+                  Il peut arriver que certaines lignes soit considérées comme tel mais ne sont que des bas de "p" ou des choses du genre,
+                  on va donc fusionner ces minis lignes avec celle de dessus
 
     Exemple : >>> exemple = separe_en_lignes(image)
                   exemple = [ (0, 21), (25, 65), ...]
@@ -45,11 +48,34 @@ def separe_en_lignes(image_binary : np, taux=0.98) -> list :
     indices_lignes = []
     for i in range(1, len(liste_indices_pixels_blancs)) :
         if liste_indices_pixels_blancs[i] != liste_indices_pixels_blancs[i-1]+1 :
-            indices_lignes.append((liste_indices_pixels_blancs[i-1], liste_indices_pixels_blancs[i]))
+            indices_lignes.append((liste_indices_pixels_blancs[i-1]-10, liste_indices_pixels_blancs[i]+10))
+
+
+    # Fusion des minis lignes avec celle du dessus
+
+    # Création d'une liste contenant la hauteur de chaque ligne
+    liste_hauteurs = []
+    for elt in indices_lignes :
+        liste_hauteurs.append((elt[1]-elt[0]))
+
+    # On trouve où sont les minis lignes, stockage de leurs indices et fusion
+    # pour définir ce qu'est une mini ligne : une ligne dont la heuteur est inférieure à 60% de la précédente
+    liste_indices_a_supprimer = []
+    for i in range(1, len(indices_lignes)) :
+        if liste_hauteurs[i] < liste_hauteurs[i-1]*0.6 :
+            liste_indices_a_supprimer.append(i)
+            out = indices_lignes[i]
+            indices_lignes[i-1] = (indices_lignes[i-1][0], out[1])
+   
+   # On supprime les minis lignes
+    liste_finale = []
+    for i in range(len(indices_lignes)) :
+        if i not in liste_indices_a_supprimer :
+            liste_finale.append(indices_lignes[i])
     
-    return indices_lignes
+    return liste_finale
 
-
+"""
 if __name__=="__main__" :
 
     image = cv2.imread('image_texte_chatgpt.png')
@@ -67,3 +93,4 @@ if __name__=="__main__" :
         plt.figure()
         plt.imshow(image[t[0]:t[1]])
         plt.show()
+"""
