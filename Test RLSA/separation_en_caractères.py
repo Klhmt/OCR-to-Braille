@@ -58,7 +58,7 @@ def separe_en_caracteres(image_binary : np, indices_debut_fin_ligne : tuple, tau
         if indices[i] != indices[i - 1] + 1:
             ranges.append((start, indices[i - 1]))
             start = indices[i]
-    ranges.append((start, indices[-1]))
+    ranges.append((start-10, indices[-1]+10))
 
     return ranges
 

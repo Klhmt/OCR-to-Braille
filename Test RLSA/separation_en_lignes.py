@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-def separe_en_lignes(image_binary : np, taux=0.98) -> list :
+def separe_en_lignes(image_binary : np, taux=0.985) -> list :
  
     """ 
     Description : Calcule le taux de pixels blancs présents sur chaque ligne de pixels. 
@@ -38,7 +38,7 @@ def separe_en_lignes(image_binary : np, taux=0.98) -> list :
         # Calcul du taux de pixels blancs dans la ligne
         taux_de_blancs = somme/len(ligne_pixel)
         # Si le taux est > a un certain nombre (0.98 de base) on considère que cette ligne ne contient pas de texte
-        if taux_de_blancs >= 0.98 : #Quasi que des blancs
+        if taux_de_blancs >= 0.985 : #Quasi que des blancs
             liste_indices_pixels_blancs.append(i)
         else : 
             liste_indices_pixels_noirs.append(i)
