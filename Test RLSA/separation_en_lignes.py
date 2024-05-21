@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-def separe_en_lignes(image_binary : np, taux=0.985) -> list :
+def separe_en_lignes(image_binary : np, taux=0.99) -> list :
  
     """ 
     Description : Calcule le taux de pixels blancs présents sur chaque ligne de pixels. 
@@ -37,8 +37,8 @@ def separe_en_lignes(image_binary : np, taux=0.985) -> list :
                 somme += 0
         # Calcul du taux de pixels blancs dans la ligne
         taux_de_blancs = somme/len(ligne_pixel)
-        # Si le taux est > a un certain nombre (0.98 de base) on considère que cette ligne ne contient pas de texte
-        if taux_de_blancs >= 0.985 : #Quasi que des blancs
+        # Si le taux est > a un certain nombre (0.985 de base) on considère que cette ligne ne contient pas de texte
+        if taux_de_blancs >= taux : #Quasi que des blancs
             liste_indices_pixels_blancs.append(i)
         else : 
             liste_indices_pixels_noirs.append(i)
@@ -48,9 +48,9 @@ def separe_en_lignes(image_binary : np, taux=0.985) -> list :
     indices_lignes = []
     for i in range(1, len(liste_indices_pixels_blancs)) :
         if liste_indices_pixels_blancs[i] != liste_indices_pixels_blancs[i-1]+1 :
-            indices_lignes.append((liste_indices_pixels_blancs[i-1]-10, liste_indices_pixels_blancs[i]+10))
+            indices_lignes.append((liste_indices_pixels_blancs[i-1], liste_indices_pixels_blancs[i])) #Améliorer le +-10
 
-
+    """
     # Fusion des minis lignes avec celle du dessus
 
     # Création d'une liste contenant la hauteur de chaque ligne
@@ -72,8 +72,9 @@ def separe_en_lignes(image_binary : np, taux=0.985) -> list :
     for i in range(len(indices_lignes)) :
         if i not in liste_indices_a_supprimer :
             liste_finale.append(indices_lignes[i])
+    """
     
-    return liste_finale
+    return indices_lignes
 
 """
 if __name__=="__main__" :
