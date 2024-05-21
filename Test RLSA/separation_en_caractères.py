@@ -51,17 +51,26 @@ def separe_en_caracteres(image_binary : np, indices_debut_fin_ligne : tuple, tau
         if dictionnaire[elt] >= taux :
             indices.append(elt)
 
-    # Obtenir des plages continues de pixels représentant les caractères
+    # Obtenir des plages continues de pixels représentant les caractères en rajoutant un peu d'espace entre les caractères pour ne pas qu'ils soient sérrés dans leurs cases
+    d = np.diff(indices)
+    espaces =[int(val/2) for val in d if val > 1]
+    
     ranges = []
     start = indices[0]
+    indices_espaces = 0
     for i in range(1, len(indices)):
         if indices[i] != indices[i - 1] + 1:
-            ranges.append((start, indices[i - 1]))
+            if indices_espaces >= 1 :
+                val_avant = espaces[indices_espaces-1] 
+            else :
+                val_avant = espaces[indices_espaces]
+            val_apres = espaces[indices_espaces]
+            ranges.append((start-val_avant, indices[i - 1]+val_apres))
             start = indices[i]
-    ranges.append((start-10, indices[-1]+10))
+            indices_espaces += 1
+    ranges.append((start-val_avant, indices[-1]+val_avant))
 
     return ranges
-
 
 """
 if __name__=="__main__" :
