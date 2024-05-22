@@ -8,7 +8,7 @@ import cv2
 import os.path
 
 
-def demander_entree):
+def demander_entree():
     while True:
         try:
             convient = input('Les paramètres d\'entrée sont-ils adaptés ? (oui/non) : ').strip().lower()
