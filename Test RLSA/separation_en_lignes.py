@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-def separe_en_lignes(image_binary : np, taux=0.99) -> list :
+def separe_en_lignes(image_binary : np, taux=0.999) -> list :
  
     """ 
     Description : Calcule le taux de pixels blancs présents sur chaque ligne de pixels. 
@@ -50,29 +50,22 @@ def separe_en_lignes(image_binary : np, taux=0.99) -> list :
         if liste_indices_pixels_blancs[i] != liste_indices_pixels_blancs[i-1]+1 :
             indices_lignes.append((liste_indices_pixels_blancs[i-1], liste_indices_pixels_blancs[i])) #Améliorer le +-10
 
-    """
-    # Fusion des minis lignes avec celle du dessus
+    distances_suivant = [int((indices_lignes[i][0]-indices_lignes[i-1][1])/2) for i in range(1, len(indices_lignes))]
+    distances_suivant.append(distances_suivant[-1])
+    moyenne = int(sum(distances_suivant)/len(distances_suivant))
+    for i in range(len(distances_suivant)) :
+        if distances_suivant[i] > moyenne :
+            distances_suivant[i] = moyenne
 
-    # Création d'une liste contenant la hauteur de chaque ligne
-    liste_hauteurs = []
-    for elt in indices_lignes :
-        liste_hauteurs.append((elt[1]-elt[0]))
 
-    # On trouve où sont les minis lignes, stockage de leurs indices et fusion
-    # pour définir ce qu'est une mini ligne : une ligne dont la heuteur est inférieure à 60% de la précédente
-    liste_indices_a_supprimer = []
-    for i in range(1, len(indices_lignes)) :
-        if liste_hauteurs[i] < liste_hauteurs[i-1]*0.6 :
-            liste_indices_a_supprimer.append(i)
-            out = indices_lignes[i]
-            indices_lignes[i-1] = (indices_lignes[i-1][0], out[1])
-   
-   # On supprime les minis lignes
-    liste_finale = []
     for i in range(len(indices_lignes)) :
-        if i not in liste_indices_a_supprimer :
-            liste_finale.append(indices_lignes[i])
-    """
+        if i == 0 :
+            indices_lignes[i] = (indices_lignes[i][0] - distances_suivant[i], indices_lignes[i][1] + distances_suivant[i])
+        elif i == len(indices_lignes) :
+            indices_lignes[i] = (indices_lignes[i][0] - distances_suivant[i-1], indices_lignes[i][1] + distances_suivant[i-1])
+        else :
+            indices_lignes[i] = (indices_lignes[i][0] - distances_suivant[i-1], indices_lignes[i][1] + distances_suivant[i])
+
     
     return indices_lignes
 
