@@ -1,0 +1,37 @@
+Étape 1 : Installer Git
+Utiliser un des deux liens : - https://gitforwindows.org/ 
+			     - http://git-scm.com/downloads
+Installez une version qui colle à votre ordi (windows, linux, etc.)
+
+
+
+Étape 2 : Paramétrer Git
+Une fois le logiciel installé lancez le.
+On va le configurer et le relier à votre compte.
+Tapez : git config --global user.name "Hugo Noel"
+	git config --global user.email hnoel1506@gmail.com
+
+
+
+Étape 3 : Cloner le répertoire Github
+Utiliser les commandes de bases (cd, ls, etc.) pour vous repérer et vous déplacer là où vous voulez cloner le projet.
+Tapez : git clone [URL]
+Vous trouverez l'URL sur la page github du projet, dans le rectangle vert "<> Code"
+Cela ne marchera surement pas du premier coup car il vous demandera de prouver que c'est bien vous et d'utiliser une clé SSH. Il vous enverra un lien et des explications sur quoi faire. C'est assez clair.
+
+
+
+Étape 4 : Utilisation de git
+A chaque utilisation vous devez :
+git pull
+# Faire les changements dans les fichiers et dossiers
+git status
+	git add [nom du fichier modifié/ajouté]
+	# Recommencer jusqu'à que tout les fichiers soient en verts (= que tout soit mis à jour)
+git commit -m "message"
+# Écrivez un message qui fait synthèse clairement et en peu de mots ce que vous avez fait 
+git push -u 
+
+Et voila vous avez les bases pour utiliser Github.
+Petits messages : évitez de toucher aux fichiers qui ne sont pas à vous.
+Ca peut créer des problèmes de version de fichiers inutllement.
