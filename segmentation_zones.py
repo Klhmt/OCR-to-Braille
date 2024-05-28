@@ -38,7 +38,7 @@ while go_on :
 
     # erosion pour étaler les caractères puis opening pour combler les trous
     radius = int(input('Rayon de l\'érosion entre 3 et 5 pour des caractères collés, entre 5 et 10 pour des caractères plus gros, entre 10 et 15 pour des caractères très espacés. Valeur : '))
-    bw_erosion = erosion(bw_resized, disk(radius)) # valeur à adapter en fonction du type de texte ici
+    bw_erosion = erosion(bw_resized, disk(radius), True) # valeur à adapter en fonction du type de texte ici
     bw_opening = opening(bw_erosion, disk(radius)) # valeur à adapter en fonction du type de texte ici
 
     # aplliquer seuillage d'Otsu
