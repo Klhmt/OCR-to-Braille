@@ -159,3 +159,49 @@ def separe_en_caracteres(image_binary : np, indices_debut_fin_ligne : tuple, tau
 
     return ranges
 
+
+
+
+"""
+if __name__=="__main__" :
+
+    source_folder = 'Test_folder/regions' 
+
+    # Parcourir les fichiers du dossier source
+    for region in os.listdir(source_folder):
+        image_region = os.listdir(f'{source_folder}/{region}')
+        nom_image= f'{source_folder}/{region}/{image_region[0]}'
+
+        # Définition de l'image et de sa binarisation
+        image = cv2.imread(nom_image)
+        # gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        # (thresh, image_binary) = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+
+        # On la sépare en lignes 
+        indices_lignes = separe_en_lignes(image_binary)
+
+        count_ligne = 1
+        # pour chaque ligne
+        for n in indices_lignes : 
+
+            # on récupère la ligne n
+            indices_debut_fin_ligne = indices_lignes[n]
+
+            #Sur cette permière ligne on sépare les caractères
+            ranges = separe_en_caracteres(image_binary, indices_debut_fin_ligne)
+
+            count_caract = 1
+            for elt in ranges :
+                
+                # Création du dossier s'il n'existe pas déjà
+                os.makedirs(f'{source_folder}/{region}/caracteres_region', exist_ok=True)
+
+                # Sauvegarder l'image traitée
+                output_path = f'{source_folder}/{region}/caracteres_region/caract_ligne_{count_ligne}_caract_{count_caract}.jpg'
+                count_caract+=1
+
+                caract = nom_image[indices_debut_fin_ligne[0]:indices_debut_fin_ligne[1], elt[0]:elt[1]]
+                cv2.imwrite(output_path, caract)
+
+            count_ligne+=1"""
+
