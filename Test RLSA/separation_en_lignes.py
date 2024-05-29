@@ -48,8 +48,8 @@ def separe_en_lignes(image_binary : np, taux=0.999) -> list :
     indices_lignes = []
     for i in range(1, len(liste_indices_pixels_blancs)) :
         if liste_indices_pixels_blancs[i] != liste_indices_pixels_blancs[i-1]+1 :
-            indices_lignes.append((liste_indices_pixels_blancs[i-1], liste_indices_pixels_blancs[i])) #Améliorer le +-10
-
+            indices_lignes.append((liste_indices_pixels_blancs[i-1]-3, liste_indices_pixels_blancs[i]+3)) #Améliorer le +-10
+    '''
     distances_suivant = [int((indices_lignes[i][0]-indices_lignes[i-1][1])/2) for i in range(1, len(indices_lignes))]
     distances_suivant.append(distances_suivant[-1])
     moyenne = int(sum(distances_suivant)/len(distances_suivant))
@@ -65,7 +65,7 @@ def separe_en_lignes(image_binary : np, taux=0.999) -> list :
             indices_lignes[i] = (indices_lignes[i][0] - distances_suivant[i-1], indices_lignes[i][1] + distances_suivant[i-1])
         else :
             indices_lignes[i] = (indices_lignes[i][0] - distances_suivant[i-1], indices_lignes[i][1] + distances_suivant[i])
-
+    '''
     
     return indices_lignes
 

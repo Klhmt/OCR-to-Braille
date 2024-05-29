@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from separation_en_lignes import separe_en_lignes
 
 
-def separe_en_caracteres(image_binary : np, indices_debut_fin_ligne : tuple, taux=0.005) -> list :
+def separe_en_caracteres(image_binary : np, indices_debut_fin_ligne : tuple, taux=0.001) -> list :
 
     """
     Description : Prends en entrée une ligne de texte dans une image et renvoie les indice de colonnes de début et de fin de chaque caractère
