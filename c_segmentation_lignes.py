@@ -2,7 +2,31 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-def separe_en_lignes(image_binary : np, taux=0.999) -> list :
+def separe_en_lignes1(img):
+    """
+    Sépare une image en lignes de texte en utilisant des opérations morphologiques et 
+    retourne une liste des indices de ligne.
+    """
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    _, binary = cv2.threshold(gray, 128, 255, cv2.THRESH_BINARY_INV)
+
+    hist = np.sum(binary, axis=1)
+
+    indices_lignes = []
+    in_line = False
+    for i, value in enumerate(hist):
+        if value > 0 and not in_line:
+            in_line = True
+            start = i
+        elif value == 0 and in_line:
+            in_line = False
+            end = i
+            indices_lignes.append((start, end))
+
+    return indices_lignes
+
+
+def separe_en_lignes(image_binary : np, taux=0.99) -> list :
  
     """ 
     Description : Calcule le taux de pixels blancs présents sur chaque ligne de pixels. 
@@ -28,10 +52,11 @@ def separe_en_lignes(image_binary : np, taux=0.999) -> list :
 
     for i in range(len(image_binary)) :
         ligne_pixel = image_binary[i]
+        # print('ligne_pixel : ', ligne_pixel)
         # Calcul du nombre de pixels blancs dans une ligne
         somme = 0
         for j in image_binary[i] :
-            if j == 255 : 
+            if np.all(j==255) : 
                 somme += 1
             else : 
                 somme += 0
@@ -50,6 +75,7 @@ def separe_en_lignes(image_binary : np, taux=0.999) -> list :
         if liste_indices_pixels_blancs[i] != liste_indices_pixels_blancs[i-1]+1 :
             indices_lignes.append((liste_indices_pixels_blancs[i-1], liste_indices_pixels_blancs[i])) #Améliorer le +-10
 
+    
     distances_suivant = [int((indices_lignes[i][0]-indices_lignes[i-1][1])/2) for i in range(1, len(indices_lignes))]
     distances_suivant.append(distances_suivant[-1])
     moyenne = int(sum(distances_suivant)/len(distances_suivant))
