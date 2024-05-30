@@ -70,8 +70,8 @@ c = Classifieur(20)
 for alphabet in os.listdir('LETTRES'):
     for sous_alphabet in os.listdir(f'LETTRES/{alphabet}') : 
         c.load_data_degraded('Test_folder/alphabet_degrade')
-        c.train()
-        c.generate_center_dict()
+c.train()
+c.generate_center_dict()
 
 
 # parcours des régions 
