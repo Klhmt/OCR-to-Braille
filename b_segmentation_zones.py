@@ -18,7 +18,6 @@ def demander_entree():
             print(f"Erreur : {e}. Veuillez entrer 'oui' ou 'non'.")
 
 def segmentation_region(nom_image) :
-    nom_image = 'image'
     input_image_path = f'Test_folder/1_{nom_image}_traitee_redressee.jpg'
     bw = cv2.imread(input_image_path, cv2.IMREAD_GRAYSCALE)
 
@@ -80,10 +79,10 @@ def segmentation_region(nom_image) :
         region_rectangulaire = bw[min_row:max_row, min_col:max_col] 
 
         # Création du dossier s'il n'existe pas déjà
-        os.makedirs('Test_folder/regions', exist_ok=True)
+        os.makedirs(f'Test_folder/regions_{nom_image}', exist_ok=True)
 
         # Chemin du dossier à créer
-        folder_path = f'Test_folder/regions/region{count}'
+        folder_path = f'Test_folder/regions_{nom_image}/region{count}'
 
         # Création du dossier s'il n'existe pas déjà
         os.makedirs(folder_path, exist_ok=True)

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCR Algorithm Steps</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        #image-container {
+            margin: 20px 0;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        button {
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Visualisation des étapes de l'algorithme d'OCR</h1>
+    <input type="file" id="upload" accept="image/*">
+    <div id="image-container">
+        <img id="image" src="" alt="Your Image">
+    </div>
+    <div id="buttons">
+        <button onclick="processStep(1)">Étape 1</button>
+        <button onclick="processStep(2)">Étape 2</button>
+        <button onclick="processStep(3)">Étape 3</button>
+        <button onclick="processStep(4)">Étape 4</button>
+        <button onclick="processStep(5)">Étape 5</button>
+    </div>
+    <script>
+        let imageFile = null;
+
+        document.getElementById('upload').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                imageFile = file;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('image').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        async function processStep(step) {
+            if (!imageFile) {
+                alert('Veuillez d\'abord télécharger une image.');
+                return;
+            }
+            const formData = new FormData();
+            formData.append('image', imageFile);
+            formData.append('step', step);
+
+            const response = await fetch('/process', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                const result = await response.blob();
+                const imageUrl = URL.createObjectURL(result);
+                document.getElementById('image').src = imageUrl;
+                imageFile = new File([result], 'processed_image.png', { type: 'image/png' });
+            } else {
+                alert('Erreur lors du traitement de l\'image.');
+            }
+        }
+    </script>
+</body>
+</html>

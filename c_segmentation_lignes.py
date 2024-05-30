@@ -77,20 +77,21 @@ def separe_en_lignes(image_binary : np, taux=0.99) -> list :
 
     
     distances_suivant = [int((indices_lignes[i][0]-indices_lignes[i-1][1])/2) for i in range(1, len(indices_lignes))]
-    distances_suivant.append(distances_suivant[-1])
-    moyenne = int(sum(distances_suivant)/len(distances_suivant))
-    for i in range(len(distances_suivant)) :
-        if distances_suivant[i] > moyenne :
-            distances_suivant[i] = moyenne
+    if len(distances_suivant) >0 : 
+        distances_suivant.append(distances_suivant[-1])
+        moyenne = int(sum(distances_suivant)/len(distances_suivant))
+        for i in range(len(distances_suivant)) :
+            if distances_suivant[i] > moyenne :
+                distances_suivant[i] = moyenne
 
 
-    for i in range(len(indices_lignes)) :
-        if i == 0 :
-            indices_lignes[i] = (indices_lignes[i][0] - distances_suivant[i], indices_lignes[i][1] + distances_suivant[i])
-        elif i == len(indices_lignes) :
-            indices_lignes[i] = (indices_lignes[i][0] - distances_suivant[i-1], indices_lignes[i][1] + distances_suivant[i-1])
-        else :
-            indices_lignes[i] = (indices_lignes[i][0] - distances_suivant[i-1], indices_lignes[i][1] + distances_suivant[i])
+        for i in range(len(indices_lignes)) :
+            if i == 0 :
+                indices_lignes[i] = (indices_lignes[i][0] - distances_suivant[i], indices_lignes[i][1] + distances_suivant[i])
+            elif i == len(indices_lignes) :
+                indices_lignes[i] = (indices_lignes[i][0] - distances_suivant[i-1], indices_lignes[i][1] + distances_suivant[i-1])
+            else :
+                indices_lignes[i] = (indices_lignes[i][0] - distances_suivant[i-1], indices_lignes[i][1] + distances_suivant[i])
 
     
     return indices_lignes
@@ -98,7 +99,7 @@ def separe_en_lignes(image_binary : np, taux=0.99) -> list :
 """
 if __name__=="__main__" :
 
-    image = cv2.imread('image_texte_chatgpt.png')
+    image = cv2.imread('image_texte.png')
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     (thresh, image_binary) = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 

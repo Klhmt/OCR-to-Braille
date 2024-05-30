@@ -52,8 +52,8 @@ def process_and_straighten_image(image_path, output_path):
     cv2.imwrite(output_path, binary_image)
     print(f"Image traitée et redressée enregistrée sous {output_path}")
 
-# Exemple d'utilisation
-nom_image = 'image'
-input_image_path = f'Test_folder/{nom_image}.jpg'
-output_image_path = f'Test_folder/1_{nom_image}_traitee_redressee.jpg'
-process_and_straighten_image(input_image_path, output_image_path)
+if __name__== "main" : 
+    nom_image = 'image'
+    input_image_path = f'Test_folder/{nom_image}.jpg'
+    output_image_path = f'Test_folder/1_{nom_image}_traitee_redressee.jpg'
+    process_and_straighten_image(input_image_path, output_image_path)

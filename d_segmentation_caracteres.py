@@ -82,7 +82,7 @@ def separe_en_caracteres2(image_binary : np, indices_debut_fin_ligne : tuple, ta
     return ranges
 
 
-def separe_en_caracteres(image_binary : np, indices_debut_fin_ligne : tuple, taux=0.05) -> list :
+def separe_en_caracteres(image_binary : np, indices_debut_fin_ligne : tuple, taux=0.001) -> list :
 
     """
     Description : Prends en entrée une ligne de texte dans une image et renvoie les indice de colonnes de début et de fin de chaque caractère
