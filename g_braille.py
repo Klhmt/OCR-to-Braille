@@ -129,6 +129,6 @@ def draw_braille_image(text, filename):
     # Enregistrement de l'image
     image.save(filename)
 
-# Exemple d'utilisation
-text = "Hello World"
-draw_braille_image(text, "braille_image.png")
+if __name__ == "main" : 
+    text = "Hello World"
+    draw_braille_image(text, "braille_image.png")

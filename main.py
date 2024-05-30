@@ -5,6 +5,7 @@ from a_pretraitement import process_and_straighten_image
 from b_segmentation_zones import segmentation_region
 from e_reconnaissance_caract import Character, Classifieur
 from f_genere_caract_degrades import generate_degraded_images
+from g_braille import draw_braille_image
 from h_sorted_files import find_and_sort_files
 import os
 
@@ -88,6 +89,8 @@ for region in regions :
             print()
             print(f'Nouvelle ligne : {ligne}')
             print()
+
+            text = ''
             # parcours des caractères
             for caract in find_and_sort_files(ligne_path):
                 
@@ -97,3 +100,7 @@ for region in regions :
                 a = Character(im, "")
                 a.traitement()
                 print(c.compare(a), end='')
+                text += str(c.compare(a))
+
+            ################################ Conversion Braille #############################
+            draw_braille_image(text, f'{ligne_path}/braille_img.png') 
