@@ -107,8 +107,8 @@ def draw_braille_image(text, filename):
     x_offset = POINT_SIZE / (POINT_SIZE * 2.1)
     y_offset = POINT_SIZE
     
-    print(f"La taille d'un pixel doit etre : {2 / (POINT_SIZE * 0.76)} mm")
-    print(f"La hauteur de l'image doit etre : {(2 / (POINT_SIZE * 0.76)) * image_height} mm")
+    # print(f"La taille d'un pixel doit etre : {2 / (POINT_SIZE * 0.76)} mm")
+    # print(f"La hauteur de l'image doit etre : {(2 / (POINT_SIZE * 0.76)) * image_height} mm")
 
     for char in braille_text:
         for j, point in enumerate(char):
