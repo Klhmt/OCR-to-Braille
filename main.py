@@ -66,9 +66,13 @@ os.makedirs('Test_folder/alphabet_degrade', exist_ok=True)
 generate_degraded_images('LETTRES\ARIAL\Alphabet_arial_minuscule', 'Test_folder/alphabet_degrade')
 
 c = Classifieur(20)
-c.load_data_degraded('Test_folder/alphabet_degrade')
-c.train()
-c.generate_center_dict()
+
+for alphabet in os.listdir('LETTRES'):
+    for sous_alphabet in os.listdir(f'LETTRES/{alphabet}') : 
+        c.load_data_degraded('Test_folder/alphabet_degrade')
+        c.train()
+        c.generate_center_dict()
+
 
 # parcours des régions 
 regions = os.listdir('Test_folder/regions_image')
@@ -95,12 +99,15 @@ for region in regions :
             for caract in find_and_sort_files(ligne_path):
                 
                 caract_path = os.path.join(ligne_path, caract)
-                # Ouverture d'une lettre
-                im = cv2.imread(caract_path, cv2.IMREAD_GRAYSCALE)
-                a = Character(im, "")
-                a.traitement()
-                print(c.compare(a), end='')
-                text += str(c.compare(a))
+                # Vérifier si l'élément n'est pas l'image braille
+                if not caract_path.endswith('braille_img.png'): 
+                
+                    # Ouverture d'une lettre
+                    im = cv2.imread(caract_path, cv2.IMREAD_GRAYSCALE)
+                    a = Character(im, "")
+                    a.traitement()
+                    print(c.compare(a), end='')
+                    text += str(c.compare(a))
 
             ################################ Conversion Braille #############################
-            draw_braille_image(text, f'{ligne_path}/braille_img.png') 
+            # draw_braille_image(text, f'{ligne_path}/braille_img.png') 
