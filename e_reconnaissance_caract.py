@@ -42,21 +42,28 @@ class Character():
         xmin, xmax = np.where(cols)[0][[0, -1]]
         self.matrix = self.matrix[ymin:ymax+1, xmin:xmax+1]
 
-    # version 1 améliorée
-    def padding(self, dimensions:tuple = (60, 60)):
+    # version 1 non modifiée
+    def padding1(self, dimensions:tuple = (60, 60)):
         """Permet d'avoir une matrice de dimensions fixe en ajoutant des 0
         Codé par Llama 3
         Non testé si l'array self.matrix est plus grand que dimensions ! Peut être ajouter aussi un downscaling dans ce cas
         """
         h, w = self.matrix.shape
-        print('self.matrix.shape', self.matrix.shape)
-        print('h :', h, 'w :', w)
-        print('self.matrix', self.matrix)
-        print('dimensions', dimensions)
+        new_arr = np.zeros(dimensions, dtype=self.matrix.dtype)
+        new_arr[:h, :w] = self.matrix
+        self.matrix = new_arr
+
+    # version 1 modifiée
+    def padding(self, dimensions:tuple = (70, 70)):
+        """Permet d'avoir une matrice de dimensions fixe en ajoutant des 0
+        Codé par Llama 3
+        Non testé si l'array self.matrix est plus grand que dimensions ! Peut être ajouter aussi un downscaling dans ce cas
+        """
+        h, w = self.matrix.shape
         if h < dimensions[0] and w > dimensions[1] : 
             resized_image = cv2.resize(self.matrix, (dimensions[0], h), interpolation=cv2.INTER_AREA)
         elif h > dimensions[0] and w < dimensions[1] :
-            resized_image = cv2.resize(self.matrix, (w, dimensions[1]))
+            resized_image = cv2.resize(self.matrix, (w, dimensions[1]), interpolation=cv2.INTER_AREA)
         elif h > dimensions[0] and w > dimensions[1] :
             resized_image = cv2.resize(self.matrix, (dimensions[0], dimensions[1]), interpolation=cv2.INTER_AREA)
         else : 

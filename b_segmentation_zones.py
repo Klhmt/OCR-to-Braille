@@ -86,10 +86,8 @@ def segmentation_region(nom_image) :
 
         # Création du dossier s'il n'existe pas déjà
         os.makedirs(folder_path, exist_ok=True)
-        print(f"Le dossier '{folder_path}' a été créé.")
 
         # Sauvegarder l'image traitée
         output_path = f'{folder_path}/region{count}.jpg'
         count+=1
         cv2.imwrite(output_path, region_rectangulaire)
-        print(f"Image segmentée en zones de texte enregistrée sous {output_path}")
