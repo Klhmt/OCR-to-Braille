@@ -6,6 +6,7 @@ from b_segmentation_zones import segmentation_region
 from c_segmentation_lignes import separe_en_lignes
 from d_segmentation_caracteres import separe_en_caracteres
 from e_reconnaissance_caract import Character, Classifieur
+from f_genere_caract_degrades import generate_degraded_images
 import os
 
 
@@ -22,7 +23,7 @@ if not os.path.exists(f'Test_folder/regions_{nom_image}'):
     segmentation_region(nom_image)
 
 ################################ 3 - Segmentaiton caractères  ################################
-
+"""
 # parcours du dossier 'regions' 
 for i in range(len(os.listdir(f'Test_folder/regions_{nom_image}'))):
 
@@ -61,21 +62,27 @@ for i in range(len(os.listdir(f'Test_folder/regions_{nom_image}'))):
             
             caract = img[indices_debut_fin_ligne[0]:indices_debut_fin_ligne[1], elt[0]:elt[1]]
             cv2.imwrite(output_path, caract)
-
             
-            
-        count_ligne+=1
-
+        count_ligne+=1"""
 
 ################################ Reconnaissance caractères #############################
 
-# c = Classifieur(20)
-# c.load_data_degraded("~/klem/degrade")
-# c.train()
-# c.generate_center_dict()
+# créer images dégradées 
+os.makedirs('Test_folder/alphabet_degrade', exist_ok=True)
+generate_degraded_images('LETTRES\ARIAL\Alphabet_arial_minuscule', 'Test_folder/alphabet_degrade')
 
-# # Ouverture d'une lettre
-# im = cv2.imread("t.png", as_gray=True)
-# a = Character(im, "")
-# a.traitement()
-# print(c.compare(a))
+c = Classifieur(20)
+c.load_data_degraded('Test_folder/alphabet_degrade')
+c.train()
+c.generate_center_dict()
+
+# parcours du dossier 'regions' 
+# for i in range(len(os.listdir(f'Test_folder/regions_{nom_image}/region1/caract'))):
+for i in range(1, 60):
+
+    # Ouverture d'une lettre
+    # im = cv2.imread(f'Test_folder/regions_{nom_image}/region1/caract/caract_ligne_1_caract_{i}.jpg', as_gray=True)
+    im = cv2.imread(f'Test_folder/regions_{nom_image}/region1/caract/caract_ligne_1_caract_{i}.jpg', cv2.IMREAD_GRAYSCALE)
+    a = Character(im, "")
+    a.traitement()
+    print(c.compare(a))
