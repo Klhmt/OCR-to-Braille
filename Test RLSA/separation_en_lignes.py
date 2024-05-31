@@ -40,7 +40,7 @@ def separe_en_lignes(image_binary : np, taux=0.999, reduction=1) -> list :
                 somme += 0
         # Calcul du taux de pixels blancs dans la ligne
         taux_de_blancs = somme/len(ligne_pixel)
-        # Si le taux est > a un certain nombre (0.985 de base) on considère que cette ligne ne contient pas de texte
+        # Si le taux est > a un certain nombre (0.99 de base) on considère que cette ligne ne contient pas de texte
         if taux_de_blancs >= taux : #Quasi que des blancs
             liste_indices_pixels_blancs.append(i)
         else : 
