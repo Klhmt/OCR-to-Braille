@@ -102,7 +102,7 @@ class Classifieur():
         Le format des fichiers attendu est "lettre_indice.png" 
         
         """
-        self.lettres_references = {}
+        #self.lettres_references = {}
                 
         for filename in os.listdir(folder_path):
             if filename.endswith(('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tif')):
