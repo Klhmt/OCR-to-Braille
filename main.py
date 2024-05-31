@@ -3,6 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from a_pretraitement import process_and_straighten_image
 from b_segmentation_zones import segmentation_region
+from c_segmentation_lignes import separe_en_lignes
+from d_segmentation_caracteres import separe_en_caracteres
 from e_reconnaissance_caract import Character, Classifieur
 from f_genere_caract_degrades import generate_degraded_images
 from g_braille import draw_braille_image
@@ -11,10 +13,10 @@ import os
 
 
 ################################ 1 - Prétraitement ################################
-nom_image = 'image' # sans le jpg !!
+nom_image = 'scan_niv_gris_300ppp_fiche_ocr' # sans le jpg !!
 
 if not os.path.exists(f'Test_folder/1_{nom_image}_traitee_redressee.jpg'):
-    input_image_path = f'Test_folder/{nom_image}.jpg'
+    input_image_path = f'Test_folder/{nom_image}.bmp'
     output_image_path = f'Test_folder/1_{nom_image}_traitee_redressee.jpg'
     process_and_straighten_image(input_image_path, output_image_path)
 
@@ -62,20 +64,21 @@ for i in range(len(os.listdir(f'Test_folder/regions_{nom_image}'))):
 ################################ Reconnaissance caractères #############################
 
 # créer images dégradées 
-os.makedirs('Test_folder/alphabet_degrade', exist_ok=True)
-generate_degraded_images('LETTRES\ARIAL\Alphabet_arial_minuscule', 'Test_folder/alphabet_degrade')
+# os.makedirs('Test_folder/alphabet_degrade', exist_ok=True)
 
 c = Classifieur(20)
 
-for alphabet in os.listdir('LETTRES'):
-    for sous_alphabet in os.listdir(f'LETTRES/{alphabet}') : 
-        c.load_data_degraded('Test_folder/alphabet_degrade')
+# for sous_alphabet in os.listdir(f'LETTRES/ARIAL/') : 
+#     if sous_alphabet != "Alphabet_arial_speciaux":
+#         generate_degraded_images(f'LETTRES\ARIAL\{sous_alphabet}', 'Test_folder/alphabet_degrade')
+
+c.load_data_degraded('degrade2')
 c.train()
 c.generate_center_dict()
 
 
 # parcours des régions 
-regions = os.listdir('Test_folder/regions_image')
+regions = os.listdir(f'Test_folder/regions_{nom_image}')
 for region in regions : 
     print()
     print('-------------------------------------------------------------')
@@ -83,9 +86,9 @@ for region in regions :
 
 
     # parcours des éléments des dossiers regions
-    for ligne in os.listdir(f'Test_folder/regions_image/{region}') : 
+    for ligne in os.listdir(f'Test_folder/regions_{nom_image}/{region}') : 
         
-        ligne_path = os.path.join(f'Test_folder/regions_image/{region}', ligne)
+        ligne_path = os.path.join(f'Test_folder/regions_{nom_image}/{region}', ligne)
 
         # Vérifier si l'élément est un dossier et non l'image {region}.jpg 
         if os.path.isdir(ligne_path) and not ligne_path.endswith(f'{region}.jpg'): 
@@ -100,7 +103,7 @@ for region in regions :
                 
                 caract_path = os.path.join(ligne_path, caract)
                 # Vérifier si l'élément n'est pas l'image braille
-                if not caract_path.endswith('braille_img.png'): 
+                if not caract_path.endswith('braille_img.png') and not caract_path.endswith('braille_img.jpg'): 
                 
                     # Ouverture d'une lettre
                     im = cv2.imread(caract_path, cv2.IMREAD_GRAYSCALE)
@@ -110,4 +113,4 @@ for region in regions :
                     text += str(c.compare(a))
 
             ################################ Conversion Braille #############################
-            # draw_braille_image(text, f'{ligne_path}/braille_img.png') 
+            # draw_braille_image(text, f'{ligne_path}/braille_img.jpg') 

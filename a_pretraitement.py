@@ -28,21 +28,21 @@ def process_and_straighten_image(image_path, output_path):
     # Lire l'image depuis le fichier
     image = cv2.imread(image_path)
     
-    # # Calculer l'angle de redressement
-    # angle = compute_skew(image)
+    # Calculer l'angle de redressement
+    angle = compute_skew(image)
     
-    # # Obtenir les dimensions de l'image
-    # (h, w) = image.shape[:2]
-    # center = (w // 2, h // 2)
+    # Obtenir les dimensions de l'image
+    (h, w) = image.shape[:2]
+    center = (w // 2, h // 2)
     
-    # # Calculer la matrice de rotation
-    # M = cv2.getRotationMatrix2D(center, angle, 1.0)
+    # Calculer la matrice de rotation
+    M = cv2.getRotationMatrix2D(center, angle, 1.0)
     
-    # # Appliquer la rotation pour redresser l'image
-    # straightened = cv2.warpAffine(image, M, (w, h), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE)
+    # Appliquer la rotation pour redresser l'image
+    straightened = cv2.warpAffine(image, M, (w, h), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE)
     
     # Convertir l'image redressée en niveaux de gris
-    # straightened_gray = cv2.cvtColor(straightened, cv2.COLOR_BGR2GRAY)
+    straightened_gray = cv2.cvtColor(straightened, cv2.COLOR_BGR2GRAY)
     straightened_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     
     # Appliquer le seuillage d'Otsu
@@ -53,7 +53,7 @@ def process_and_straighten_image(image_path, output_path):
     print(f"Image traitée et redressée enregistrée sous {output_path}")
 
 if __name__== "main" : 
-    nom_image = 'image'
+    nom_image = 'Test_folder/texte_deux_colonnes.jpg'
     input_image_path = f'Test_folder/{nom_image}.jpg'
     output_image_path = f'Test_folder/1_{nom_image}_traitee_redressee.jpg'
     process_and_straighten_image(input_image_path, output_image_path)
