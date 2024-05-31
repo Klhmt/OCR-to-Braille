@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-def separe_en_lignes(image_binary : np, taux=0.999) -> list :
+def separe_en_lignes(image_binary : np, taux=0.999, reduction=1) -> list :
  
     """ 
     Description : Calcule le taux de pixels blancs présents sur chaque ligne de pixels. 
@@ -18,7 +18,8 @@ def separe_en_lignes(image_binary : np, taux=0.999) -> list :
 
     Input : (image) : une image binarisée en numpy
             (taux) : un float entre 0 et 1 représentant le nombre de pixels blancs / le nombre de pixels total de la ligne. De base sur 0.98
-
+            (reduction) : int >= 1, mettre 3 au max sinon possibilité de perte d'informations, indique par quel nombre on divise le nombre de colonnes de l'image pour faire les tests
+            
     Output : (indices_lignes) : une liste de tuples, chaque tuple les coordonées y de début et de fin de chaque ligne
 
     """
@@ -26,11 +27,13 @@ def separe_en_lignes(image_binary : np, taux=0.999) -> list :
     liste_indices_pixels_blancs = []
     liste_indices_pixels_noirs = []
 
-    for i in range(len(image_binary)) :
-        ligne_pixel = image_binary[i]
+    image_reduite = image_binary[0:len(image_binary), 0:int(len(image_binary)/reduction)]
+
+    for i in range(len(image_reduite)) :
+        ligne_pixel = image_reduite[i]
         # Calcul du nombre de pixels blancs dans une ligne
         somme = 0
-        for j in image_binary[i] :
+        for j in image_reduite[i] :
             if j == 255 : 
                 somme += 1
             else : 
@@ -48,7 +51,9 @@ def separe_en_lignes(image_binary : np, taux=0.999) -> list :
     indices_lignes = []
     for i in range(1, len(liste_indices_pixels_blancs)) :
         if liste_indices_pixels_blancs[i] != liste_indices_pixels_blancs[i-1]+1 :
-            indices_lignes.append((liste_indices_pixels_blancs[i-1]-3, liste_indices_pixels_blancs[i]+3)) #Améliorer le +-10
+            indices_lignes.append((liste_indices_pixels_blancs[i-1]-5, liste_indices_pixels_blancs[i]+5)) 
+    
+    # Amélioration du +-5, chiant si paragraphe, a voir lequel on utilise
     '''
     distances_suivant = [int((indices_lignes[i][0]-indices_lignes[i-1][1])/2) for i in range(1, len(indices_lignes))]
     distances_suivant.append(distances_suivant[-1])

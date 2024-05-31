@@ -25,7 +25,7 @@ if not os.path.exists(f'Test_folder/regions_{nom_image}'):
     segmentation_region(nom_image)
 
 ################################ 3 - Segmentaiton caractères  ################################
-
+"""
 # parcours du dossier 'regions' 
 for i in range(len(os.listdir(f'Test_folder/regions_{nom_image}'))):
 
@@ -59,25 +59,26 @@ for i in range(len(os.listdir(f'Test_folder/regions_{nom_image}'))):
             caract = img[indices_debut_fin_ligne[0]:indices_debut_fin_ligne[1], elt[0]:elt[1]]
             cv2.imwrite(output_path, caract)
             
-        count_ligne+=1
+        count_ligne+=1"""
 
 ################################ Reconnaissance caractères #############################
 
 # créer images dégradées 
-os.makedirs('Test_folder/alphabet_degrade', exist_ok=True)
+# os.makedirs('Test_folder/alphabet_degrade', exist_ok=True)
 
 c = Classifieur(20)
 
-for sous_alphabet in os.listdir(f'LETTRES/ARIAL/') : 
-    if sous_alphabet != "Alphabet_arial_speciaux":
-        generate_degraded_images(f'LETTRES\ARIAL\{sous_alphabet}', 'Test_folder/alphabet_degrade')
-c.load_data_degraded(f'Test_folder/alphabet_degrade/')
+# for sous_alphabet in os.listdir(f'LETTRES/ARIAL/') : 
+#     if sous_alphabet != "Alphabet_arial_speciaux":
+#         generate_degraded_images(f'LETTRES\ARIAL\{sous_alphabet}', 'Test_folder/alphabet_degrade')
+
+c.load_data_degraded('degrade2')
 c.train()
 c.generate_center_dict()
 
 
 # parcours des régions 
-regions = os.listdir(f'Test_folder/{nom_image}')
+regions = os.listdir(f'Test_folder/regions_{nom_image}')
 for region in regions : 
     print()
     print('-------------------------------------------------------------')
@@ -102,7 +103,7 @@ for region in regions :
                 
                 caract_path = os.path.join(ligne_path, caract)
                 # Vérifier si l'élément n'est pas l'image braille
-                if not caract_path.endswith('braille_img.png'): 
+                if not caract_path.endswith('braille_img.png') and not caract_path.endswith('braille_img.jpg'): 
                 
                     # Ouverture d'une lettre
                     im = cv2.imread(caract_path, cv2.IMREAD_GRAYSCALE)
@@ -112,4 +113,4 @@ for region in regions :
                     text += str(c.compare(a))
 
             ################################ Conversion Braille #############################
-            # draw_braille_image(text, f'{ligne_path}/braille_img.png') 
+            # draw_braille_image(text, f'{ligne_path}/braille_img.jpg') 

@@ -42,16 +42,6 @@ class Character():
         xmin, xmax = np.where(cols)[0][[0, -1]]
         self.matrix = self.matrix[ymin:ymax+1, xmin:xmax+1]
 
-    # version 1 non modifiée
-    def padding1(self, dimensions:tuple = (60, 60)):
-        """Permet d'avoir une matrice de dimensions fixe en ajoutant des 0
-        Codé par Llama 3
-        Non testé si l'array self.matrix est plus grand que dimensions ! Peut être ajouter aussi un downscaling dans ce cas
-        """
-        h, w = self.matrix.shape
-        new_arr = np.zeros(dimensions, dtype=self.matrix.dtype)
-        new_arr[:h, :w] = self.matrix
-        self.matrix = new_arr
 
     # version 1 modifiée
     def padding(self, dimensions:tuple = (70, 70)):
@@ -73,18 +63,8 @@ class Character():
         
         new_arr = np.zeros(dimensions, dtype=resized_image.dtype)
         """
-        new_arr = np.zeros(dimensions, dtype=self.matrix.dtype)
+        new_arr = 255*np.ones(dimensions, dtype=self.matrix.dtype)
         new_arr[:h, :w] = self.matrix
-        self.matrix = new_arr
-
-    # version 2
-    def padding2(self, dimensions:tuple = (60, 60)):
-        h, w = self.matrix.shape
-        padding_top, padding_bottom, padding_left, padding_right = abs(dimensions-h)/2, abs(dimensions-h)/2, abs(dimensions-w)/2, abs(dimensions-w)/2
-        new_h = h + padding_top + padding_bottom
-        new_w = w + padding_left + padding_right
-        new_arr = np.zeros((new_h, new_w), dtype=self.matrix.dtype)
-        new_arr[padding_top:padding_top+h, padding_left:padding_left+w] = self.matrix
         self.matrix = new_arr
     
     def traitement(self):
@@ -170,10 +150,10 @@ class Classifieur():
             self.centers[lettre] = vecteur_moyen
     
     def compare(self, unknown):
-        """Dis de quel centre le caractère est le plus procher"""
+        """Dis de quel centre le caractère est le plus proche"""
         # On applique les traitements au caractère inconnu
         unknown.traitement()
-        
+
         # On calcule le vecteur réduit le caractérisant
         unknown.reduce_dimension(self.pca)
         
