@@ -3,6 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from a_pretraitement import process_and_straighten_image
 from b_segmentation_zones import segmentation_region
+from c_segmentation_lignes import separe_en_lignes
+from d_segmentation_caracteres import separe_en_caracteres
 from e_reconnaissance_caract import Character, Classifieur
 from f_genere_caract_degrades import generate_degraded_images
 from g_braille import draw_braille_image
@@ -11,10 +13,10 @@ import os
 
 
 ################################ 1 - Prétraitement ################################
-nom_image = 'image' # sans le jpg !!
+nom_image = 'scan_niv_gris_300ppp_fiche_ocr' # sans le jpg !!
 
 if not os.path.exists(f'Test_folder/1_{nom_image}_traitee_redressee.jpg'):
-    input_image_path = f'Test_folder/{nom_image}.jpg'
+    input_image_path = f'Test_folder/{nom_image}.bmp'
     output_image_path = f'Test_folder/1_{nom_image}_traitee_redressee.jpg'
     process_and_straighten_image(input_image_path, output_image_path)
 
@@ -23,7 +25,7 @@ if not os.path.exists(f'Test_folder/regions_{nom_image}'):
     segmentation_region(nom_image)
 
 ################################ 3 - Segmentaiton caractères  ################################
-"""
+
 # parcours du dossier 'regions' 
 for i in range(len(os.listdir(f'Test_folder/regions_{nom_image}'))):
 
@@ -57,25 +59,25 @@ for i in range(len(os.listdir(f'Test_folder/regions_{nom_image}'))):
             caract = img[indices_debut_fin_ligne[0]:indices_debut_fin_ligne[1], elt[0]:elt[1]]
             cv2.imwrite(output_path, caract)
             
-        count_ligne+=1"""
+        count_ligne+=1
 
 ################################ Reconnaissance caractères #############################
 
 # créer images dégradées 
 os.makedirs('Test_folder/alphabet_degrade', exist_ok=True)
-generate_degraded_images('LETTRES\ARIAL\Alphabet_arial_minuscule', 'Test_folder/alphabet_degrade')
 
 c = Classifieur(20)
 
-for alphabet in os.listdir('LETTRES'):
-    for sous_alphabet in os.listdir(f'LETTRES/{alphabet}') : 
-        c.load_data_degraded('Test_folder/alphabet_degrade')
-        c.train()
-        c.generate_center_dict()
+for sous_alphabet in os.listdir(f'LETTRES/ARIAL/') : 
+    if sous_alphabet != "Alphabet_arial_speciaux":
+        generate_degraded_images(f'LETTRES\ARIAL\{sous_alphabet}', 'Test_folder/alphabet_degrade')
+c.load_data_degraded(f'Test_folder/alphabet_degrade/')
+c.train()
+c.generate_center_dict()
 
 
 # parcours des régions 
-regions = os.listdir('Test_folder/regions_image')
+regions = os.listdir(f'Test_folder/{nom_image}')
 for region in regions : 
     print()
     print('-------------------------------------------------------------')
@@ -83,9 +85,9 @@ for region in regions :
 
 
     # parcours des éléments des dossiers regions
-    for ligne in os.listdir(f'Test_folder/regions_image/{region}') : 
+    for ligne in os.listdir(f'Test_folder/regions_{nom_image}/{region}') : 
         
-        ligne_path = os.path.join(f'Test_folder/regions_image/{region}', ligne)
+        ligne_path = os.path.join(f'Test_folder/regions_{nom_image}/{region}', ligne)
 
         # Vérifier si l'élément est un dossier et non l'image {region}.jpg 
         if os.path.isdir(ligne_path) and not ligne_path.endswith(f'{region}.jpg'): 

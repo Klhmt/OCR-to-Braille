@@ -26,7 +26,7 @@ def separe_en_lignes1(img):
     return indices_lignes
 
 
-def separe_en_lignes(image_binary : np, taux=0.99) -> list :
+def separe_en_lignes(image_binary : np, taux=0.999) -> list :
  
     """ 
     Description : Calcule le taux de pixels blancs présents sur chaque ligne de pixels. 

@@ -59,7 +59,9 @@ class Character():
         Codé par Llama 3
         Non testé si l'array self.matrix est plus grand que dimensions ! Peut être ajouter aussi un downscaling dans ce cas
         """
+        
         h, w = self.matrix.shape
+        """
         if h < dimensions[0] and w > dimensions[1] : 
             resized_image = cv2.resize(self.matrix, (dimensions[0], h), interpolation=cv2.INTER_AREA)
         elif h > dimensions[0] and w < dimensions[1] :
@@ -68,7 +70,10 @@ class Character():
             resized_image = cv2.resize(self.matrix, (dimensions[0], dimensions[1]), interpolation=cv2.INTER_AREA)
         else : 
             resized_image = self.matrix
+        
         new_arr = np.zeros(dimensions, dtype=resized_image.dtype)
+        """
+        new_arr = np.zeros(dimensions, dtype=self.matrix.dtype)
         new_arr[:h, :w] = self.matrix
         self.matrix = new_arr
 
