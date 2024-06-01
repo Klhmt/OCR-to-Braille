@@ -1,116 +1,65 @@
-import cv2
-import numpy as np
-import matplotlib.pyplot as plt
 from a_pretraitement import process_and_straighten_image
-from b_segmentation_zones import segmentation_region
-from c_segmentation_lignes import separe_en_lignes
-from d_segmentation_caracteres import separe_en_caracteres
-from e_reconnaissance_caract import Character, Classifieur
-from f_genere_caract_degrades import generate_degraded_images
+from b_segmentation_zones import segmentation_region, demander_oui_ou_non
+from d_segmentation_caracteres import segmentation_caractere_image
+from e_reconnaissance_caract import reconnaissance_text_image, Classifieur
 from g_braille import draw_braille_image
-from h_sorted_files import find_and_sort_files
+from j_entrainer_pca import genere_image_degradees
 import os
+            
 
+################################ 0 - Import de l'image  ################################
+
+input_image_path = f'TEST/scan_niv_gris_300ppp_fiche_ocr.bmp'
 
 ################################ 1 - Prétraitement ################################
-nom_image = 'scan_niv_gris_300ppp_fiche_ocr' # sans le jpg !!
 
-if not os.path.exists(f'Test_folder/1_{nom_image}_traitee_redressee.jpg'):
-    input_image_path = f'Test_folder/{nom_image}.bmp'
-    output_image_path = f'Test_folder/1_{nom_image}_traitee_redressee.jpg'
+if demander_oui_ou_non('Etape de prétraitement ? ') : 
+    output_image_path = 'TEST/image_pretraitement.jpg'
     process_and_straighten_image(input_image_path, output_image_path)
 
 ################################ 2 - Segmentation zones ################################
-if not os.path.exists(f'Test_folder/regions_{nom_image}'):
-    segmentation_region(nom_image)
+
+if demander_oui_ou_non('Etape de segementation en zones de texte ? '):
+    segmentation_region()
 
 ################################ 3 - Segmentaiton caractères  ################################
-"""
-# parcours du dossier 'regions' 
-for i in range(len(os.listdir(f'Test_folder/regions_{nom_image}'))):
 
-    # récupération de l'image
-    img_list = os.listdir(f'Test_folder/regions_{nom_image}/region{i+1}')
-    img_nom= f'Test_folder/regions_{nom_image}/region{i+1}/region{i+1}.jpg'
+if demander_oui_ou_non('Etape de segementation en caractères ? '):
+    print('input_image_path :', input_image_path)
+    segmentation_caractere_image(input_image_path)
 
-    # Définition de l'image
-    img = cv2.imread(img_nom)
+###################### Entraîner le PCA avec un jeu de données #############################
 
-    # séparation en lignes 
-    indices_lignes = separe_en_lignes(img)
-    
-    count_ligne = 1
-    # pour chaque ligne
-    for indices_debut_fin_ligne in indices_lignes : 
+if demander_oui_ou_non('Entraitement du PCA ? '):
 
-        # séparation caractères
-        ranges = separe_en_caracteres(img, indices_debut_fin_ligne)
+    # parcours des alphabets du dossier 'LETTRES/'
+    for alphabet in os.listdir('LETTRES') : 
 
-        # Création du dossier s'il n'existe pas déjà
-        os.makedirs(f'Test_folder/regions_{nom_image}/region{i+1}/ligne{count_ligne}', exist_ok=True)
-
-        count_caract = 1
-        for elt in ranges :
-
-            # Sauvegarder l'image traitée
-            output_path = f'Test_folder/regions_{nom_image}/region{i+1}/ligne{count_ligne}/caract{count_caract}.jpg'
-            count_caract+=1
+        print('alphabet : ', alphabet)
+        # parcours des sous-alphabets des alphabets
+        for sous_alphabet in os.listdir(f'LETTRES/{alphabet}') :
             
-            caract = img[indices_debut_fin_ligne[0]:indices_debut_fin_ligne[1], elt[0]:elt[1]]
-            cv2.imwrite(output_path, caract)
-            
-        count_ligne+=1"""
+            print('sous-alphabet : ', sous_alphabet)
+            # Filtrer pour ne garder que les sous-dossiers
+            sous_dossiers = [d for d in sous_alphabet if os.path.isdir(os.path.join(f'LETTRES/{alphabet}', d))] 
+
+            genere_image_degradees(f'LETTRES/{alphabet}/{sous_alphabet}')
 
 ################################ Reconnaissance caractères #############################
 
-# créer images dégradées 
-# os.makedirs('Test_folder/alphabet_degrade', exist_ok=True)
-
 c = Classifieur(20)
-
-# for sous_alphabet in os.listdir(f'LETTRES/ARIAL/') : 
-#     if sous_alphabet != "Alphabet_arial_speciaux":
-#         generate_degraded_images(f'LETTRES\ARIAL\{sous_alphabet}', 'Test_folder/alphabet_degrade')
-
-c.load_data_degraded('degrade2')
+c.load_data_degraded("LETTRES/ARIAL/Alphabet_arial_minuscule")
 c.train()
 c.generate_center_dict()
 
+if demander_oui_ou_non('Reconnaissance caractères ? '):
+    texte, taux = reconnaissance_text_image(c)
 
-# parcours des régions 
-regions = os.listdir(f'Test_folder/regions_{nom_image}')
-for region in regions : 
-    print()
-    print('-------------------------------------------------------------')
-    print(f'Nouvelle région : {region}')
+################################ Conversion Braille #############################
 
+if demander_oui_ou_non('Création des images Braille ? '):
+    for region in texte:
+        for ligne in region:
+            for texte_ligne in ligne:
+                draw_braille_image(texte, "Test_folder/braille_image.jpg") # changer en .png si erreur 
 
-    # parcours des éléments des dossiers regions
-    for ligne in os.listdir(f'Test_folder/regions_{nom_image}/{region}') : 
-        
-        ligne_path = os.path.join(f'Test_folder/regions_{nom_image}/{region}', ligne)
-
-        # Vérifier si l'élément est un dossier et non l'image {region}.jpg 
-        if os.path.isdir(ligne_path) and not ligne_path.endswith(f'{region}.jpg'): 
-            
-            print()
-            print(f'Nouvelle ligne : {ligne}')
-            print()
-
-            text = ''
-            # parcours des caractères
-            for caract in find_and_sort_files(ligne_path):
-                
-                caract_path = os.path.join(ligne_path, caract)
-                # Vérifier si l'élément n'est pas l'image braille
-                if not caract_path.endswith('braille_img.png') and not caract_path.endswith('braille_img.jpg'): 
-                
-                    # Ouverture d'une lettre
-                    im = cv2.imread(caract_path, cv2.IMREAD_GRAYSCALE)
-                    a = Character(im, "")
-                    a.traitement()
-                    print(c.compare(a), end='')
-                    text += str(c.compare(a))
-
-            ################################ Conversion Braille #############################
-            # draw_braille_image(text, f'{ligne_path}/braille_img.jpg') 

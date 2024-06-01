@@ -2,30 +2,6 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-def separe_en_lignes1(img):
-    """
-    Sépare une image en lignes de texte en utilisant des opérations morphologiques et 
-    retourne une liste des indices de ligne.
-    """
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    _, binary = cv2.threshold(gray, 128, 255, cv2.THRESH_BINARY_INV)
-
-    hist = np.sum(binary, axis=1)
-
-    indices_lignes = []
-    in_line = False
-    for i, value in enumerate(hist):
-        if value > 0 and not in_line:
-            in_line = True
-            start = i
-        elif value == 0 and in_line:
-            in_line = False
-            end = i
-            indices_lignes.append((start, end))
-
-    return indices_lignes
-
-
 def separe_en_lignes(image_binary : np, taux=0.999, reduction=1) -> list :
  
     """ 
@@ -99,16 +75,17 @@ def separe_en_lignes(image_binary : np, taux=0.999, reduction=1) -> list :
     
     return indices_lignes
 
-"""
+
+
+
+
+
 if __name__=="__main__" :
 
-    image = cv2.imread('image_texte.png')
+    image = cv2.imread('TEST\image.jpg')
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     (thresh, image_binary) = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 
-    plt.figure()
-    plt.imshow(image_binary, cmap=plt.cm.gray)
-    plt.show()
 
     indices_lignes = separe_en_lignes(image_binary)
     print("Indices y de début de fin pour chaque ligne :", indices_lignes)
@@ -117,4 +94,3 @@ if __name__=="__main__" :
         plt.figure()
         plt.imshow(image[t[0]:t[1]])
         plt.show()
-"""

@@ -6,19 +6,18 @@ import numpy as np
 import cv2
 import os
 
-
-def demander_entree():
+def demander_oui_ou_non(question):
     while True:
-        try:
-            convient = input('Les paramètres d\'entrée sont-ils adaptés ? (oui/non) : ').strip().lower()
-            if convient not in ['oui', 'non']:
-                raise ValueError('Entrée non valide')
-            return convient
-        except ValueError as e:
-            print(f"Erreur : {e}. Veuillez entrer 'oui' ou 'non'.")
+        reponse = input(f"{question} (oui/non): ").strip().lower()
+        if reponse in ('oui', 'o'):
+            return True
+        elif reponse in ('non', 'n'):
+            return False
+        else:
+            print("Veuillez répondre par 'oui' ou 'non'.")
 
-def segmentation_region(nom_image) :
-    input_image_path = f'Test_folder/1_{nom_image}_traitee_redressee.jpg'
+def segmentation_region() :
+    input_image_path = 'TEST/image_pretraitement.jpg'
     bw = cv2.imread(input_image_path, cv2.IMREAD_GRAYSCALE)
 
     bw_resized=cv2.resize(bw, (0, 0), fx=0.5, fy=0.5) 
@@ -49,12 +48,12 @@ def segmentation_region(nom_image) :
 
         # Filtrer les petits points
         liste_regions_brute = measure.regionprops(labeled)
-        liste_regions_brute_filtree = [region for region in liste_regions_brute if region.area > 100]
+        liste_regions_brute_filtree = [region for region in liste_regions_brute if region.area > 200]
 
         ####################### PLOT ###############################
         plt.subplot(121)
         plt.imshow(bw)
-        plt.title(f'Image {nom_image} de base')
+        plt.title(f'Image de base')
 
         plt.subplot(122)
         plt.imshow(pseudo_color)
@@ -62,8 +61,7 @@ def segmentation_region(nom_image) :
         plt.suptitle('fermer l\'image pour continuer')
         plt.show()
 
-        convient = demander_entree()
-        if convient=='oui':
+        if demander_oui_ou_non('Les paramètres d\'entrée sont-ils adaptés ?') :
             go_on=False
         else :
             go_on=True
@@ -79,15 +77,8 @@ def segmentation_region(nom_image) :
         region_rectangulaire = bw[min_row:max_row, min_col:max_col] 
 
         # Création du dossier s'il n'existe pas déjà
-        os.makedirs(f'Test_folder/regions_{nom_image}', exist_ok=True)
-
-        # Chemin du dossier à créer
-        folder_path = f'Test_folder/regions_{nom_image}/region{count}'
-
-        # Création du dossier s'il n'existe pas déjà
-        os.makedirs(folder_path, exist_ok=True)
+        os.makedirs(f'TEST/caracteres', exist_ok=True)
 
         # Sauvegarder l'image traitée
-        output_path = f'{folder_path}/region{count}.jpg'
+        cv2.imwrite(f'TEST/caracteres/region{count}.bmp', region_rectangulaire)
         count+=1
-        cv2.imwrite(output_path, region_rectangulaire)

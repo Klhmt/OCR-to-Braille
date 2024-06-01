@@ -10,6 +10,9 @@ from sklearn.metrics.pairwise import euclidean_distances
 from sklearn.metrics.pairwise import pairwise_distances_argmin
 from skimage import measure
 import cv2
+import re
+from collections import defaultdict
+from i_taux_erreur import pytesseract_extract_text
 
 class Character():
     def __init__(self, matrix, description=""):
@@ -87,7 +90,6 @@ class Character():
         return measure.moments_hu(nu)
 
 
-
 class Classifieur():
     def __init__(self, n):
         self.pca = PCA(n_components=n)
@@ -102,7 +104,7 @@ class Classifieur():
         Le format des fichiers attendu est "lettre_indice.png" 
         
         """
-        #self.lettres_references = {}
+        self.lettres_references = {}
                 
         for filename in os.listdir(folder_path):
             if filename.endswith(('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tif')):
@@ -165,16 +167,122 @@ class Classifieur():
         for x, y in self.centers.items():
             if np.all(y == most_near_center_vector):
                 return x
-        
-"""
-c = Classifieur(20)
-c.load_data_degraded("~/klem/degrade")
-c.train()
-c.generate_center_dict()
 
-# Ouverture d'une lettre
-im = imread("t.png", as_gray=True)
-a = Character(im, "")
-a.traitement()
-print(c.compare(a))
-"""
+
+def tri_images_dossier_caracteres():
+    """
+    parcourt toutes les images du dossier TEST/caracteres et ne garde que celles dont le nom 
+    est de la forme region{region_count}_ligne{ligne_count}_{caract_count}.bmp, 
+    puis les trie par région et par ligne
+
+    Input : 
+        - None
+    Outpul : 
+        - dico_images (dict) : dictionnaire des images trié par régions, lignes et caractères
+    """
+
+    # Chemin du dossier à parcourir
+    dossier = 'TEST/caracteres'
+
+    # Expression régulière pour matcher les noms de fichiers de la forme 'region{region_count}_ligne{ligne_count}_{caract_count}.bmp'
+    pattern = re.compile(r'region(\d+)_ligne(\d+)_(\d+)\.bmp')
+
+    # Dictionnaire pour stocker les images triées par région et ligne
+    images_dict = defaultdict(lambda: defaultdict(list))
+
+    # Parcourir le dossier
+    for fichier in os.listdir(dossier):
+        match = pattern.match(fichier)
+        if match:
+            region_count = int(match.group(1))
+            ligne_count = int(match.group(2))
+            caract_count = int(match.group(3))
+            
+            # Ajouter le chemin complet de l'image à la structure de données
+            chemin_image = os.path.join(dossier, fichier)
+            images_dict[region_count][ligne_count].append((caract_count, chemin_image))
+
+    # Trier les images par region_count, ligne_count et caract_count
+    for region in images_dict:
+        for ligne in images_dict[region]:
+            images_dict[region][ligne].sort()
+
+    # # Afficher les images triées par région et ligne
+    # for region in sorted(images_dict):
+    #     print(f"Région {region}:")
+    #     for ligne in sorted(images_dict[region]):
+    #         print(f"  Ligne {ligne}:")
+    #         for caract_count, img in images_dict[region][ligne]:
+    #             print(f"    Caractère {caract_count}: {img}")
+
+    return images_dict
+
+
+
+def reconnaissance_text_image(classifieur) : 
+    """
+    Exécute l'algo de reconnaissance de caractères sur toute l'image
+
+    Input : 
+        - input_image_path : le chemin de l'image d'entrée.
+    Output : 
+        - texte (dict) : le texte reconnu, sous format dictionnaire
+        - taux (flaot) : le taux d'erreur de notre algo de reconnaissance par rapport à Pytesseract
+    """
+
+    # on utilise defaultdict pour créer un dictionnaire de dictionnaires
+    # utile lorsqu'on a besoin de créer automatiquement des sous-dictionnaires imbriqués 
+    # sans vérifier manuellement leur existence.
+    texte_dico = defaultdict(lambda: defaultdict(dict))
+    nombre_caract = 0
+    caract_identiques = 0
+
+    images_dict = tri_images_dossier_caracteres()
+
+    # parcours des régions
+    for region in sorted(images_dict): 
+        print()
+        print('-------------------------------------------------------------')
+        print(f"Région {region}:")
+
+        # parcours des lignes
+        for ligne in sorted(images_dict[region]):
+            print()
+            print(f"  Ligne {ligne}:")
+
+            texte_ligne = ''
+            # parcours des caractères
+            for caract_count, chemin_image in images_dict[region][ligne]:
+                # Ouverture d'une lettre
+                im = cv2.imread(chemin_image, cv2.IMREAD_GRAYSCALE)
+                a = Character(im, "")
+                a.traitement()
+
+                # identification
+                lettre_identifiee = classifieur.compare(a)
+                print(lettre_identifiee, end='')
+                texte_ligne += lettre_identifiee
+                
+                # calcul taux erreur 
+                caract_pytesseract = pytesseract_extract_text(chemin_image)
+                nombre_caract+=1
+                if caract_pytesseract == a : 
+                    caract_identiques +=1
+
+            texte_dico[region][ligne]=texte_ligne
+
+    taux = caract_identiques/nombre_caract
+    return texte_dico, taux
+
+if __name__=="main" : 
+    c = Classifieur(20)
+    c.load_data_degraded("LETTRES/ARIAL/Alphabet_arial_minuscule")
+    c.train()
+    c.generate_center_dict()
+
+    # Ouverture d'une lettre
+    im = imread("t.png", as_gray=True)
+    a = Character(im, "")
+    a.traitement()
+    print(c.compare(a))
+

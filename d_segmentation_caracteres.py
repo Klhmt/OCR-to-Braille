@@ -1,4 +1,8 @@
 import numpy as np
+import os
+import re
+import cv2
+from c_segmentation_lignes import separe_en_lignes
 
 def separe_en_caracteres(image_binary : np, indices_debut_fin_ligne : tuple, taux=0.001) -> list :
 
@@ -73,3 +77,75 @@ def separe_en_caracteres(image_binary : np, indices_debut_fin_ligne : tuple, tau
     ranges.append((start - val_avant, indices[-1] + val_avant))
 
     return ranges
+
+def nom_images_des_regions() : 
+    """
+    Parcours le dossier 'TEST/caracteres' et ne récupère que les images qui ont un nom de la forme 'region{nb_region}.bmp 
+
+    Output : 
+        - regions (list) : une liste des noms des images correspondant aux régions
+    """
+
+    # Chemin du dossier à parcourir
+    dossier = 'TEST/caracteres'
+
+    # Expression régulière pour matcher les noms de fichiers de la forme 'region{nb_region}.bmp'
+    pattern = re.compile(r'region\d+\.bmp')
+
+    # Liste pour stocker les chemins des images correspondant au pattern
+    chemin_regions = []
+
+    # Parcourir le dossier
+    for fichier in os.listdir(dossier):
+        if pattern.match(fichier):
+            # Ajouter le chemin complet de l'image à la liste
+            chemin_image = os.path.join(dossier, fichier)
+            chemin_regions.append(chemin_image)
+
+    return chemin_regions
+
+def segmentation_caractere_image(input_image_path) :
+    """
+    Extrait tous les caractères d'une image. Création d'images matricielles au format bitmap entregistrées sous TEST/caracteres
+
+    Input : 
+        - input_image_path (str) : Chemin de l'image d'entrée
+    Output : 
+        - None
+        
+    """
+    
+    # liste des région et initialisation du compteur de régions
+    chemin_regions = nom_images_des_regions()
+    count_region = 1
+
+    # parcours du dossier 'TEST/caracteres', à la recherche des images correpondant au zones de texte.
+    for chemin_region in chemin_regions : 
+
+        # Définition de l'image
+        image_region = cv2.imread(chemin_region)
+        print('chemin_region : ', chemin_region)
+
+        # séparation en lignes 
+        indices_lignes = separe_en_lignes(image_region)
+        
+        count_ligne = 1
+        # pour chaque ligne
+        for indices_debut_fin_ligne in indices_lignes : 
+
+            # séparation caractères
+            ranges = separe_en_caracteres(image_region, indices_debut_fin_ligne)
+
+            # parcours des caracteres de la ligne
+            count_caract = 1
+            for elt in ranges :
+                
+                caract = image_region[indices_debut_fin_ligne[0]:indices_debut_fin_ligne[1], elt[0]:elt[1]]
+
+                # Sauvegarder l'image en format matriciel (bitmap)
+                cv2.imwrite(f'TEST/caracteres/region{count_region}_ligne{count_ligne}_{count_caract}.bmp', caract)
+                count_caract+=1
+                
+            count_ligne+=1
+        count_region+=1
+    

@@ -1,5 +1,7 @@
 import cv2
 import numpy as np
+import os
+import re
 
 def compute_skew(image):
     # Convertir l'image en niveaux de gris
@@ -50,7 +52,6 @@ def process_and_straighten_image(image_path, output_path):
     
     # Sauvegarder l'image traitée
     cv2.imwrite(output_path, binary_image)
-    print(f"Image traitée et redressée enregistrée sous {output_path}")
 
 if __name__== "main" : 
     nom_image = 'Test_folder/texte_deux_colonnes.jpg'
