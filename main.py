@@ -47,6 +47,8 @@ if demander_oui_ou_non('Entraitement du PCA ? '):
 
 ################################ Reconnaissance caractères #############################
 
+# J'ai mis ça provisoirement parce que j'avais pas envie de créer un des caractères dégradés de tous les alphabets 
+# mais normalement ça n'a pas ça place ici, c'est juste au dessus qu'on entraine le pca
 c = Classifieur(20)
 c.load_data_degraded("LETTRES/ARIAL/Alphabet_arial_minuscule")
 c.train()
