@@ -14,7 +14,7 @@ def degrade_image(nom, image_path, folder_path):
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
 
-    for i in range(3):
+    for i in range(50):
         degraded_image = np.copy(image)
         applied_alterations = []  # Liste pour stocker les altérations déjà appliquées
         
