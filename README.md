@@ -1,18 +1,23 @@
-# OCR to Braille
+# Reconstruction de l'algorithme OCR
 
-Our high school project "Projet d'Initiation à l'Ingénierie (P2I)" is about creating an OCR system that allows to transform text in a photo into Braille characters.
+## Description
+Cet alogorithme de Reconnaissance Optique de Caractères (OCR) s'inscrit dans le cadre du projet de P2I (Projet d'Initiation à l'Ingénierie) de deuxième année à l'INSA de Lyon. Il vise à reconstruire un algorithme d'OCR en utilisant des techniques de traitement d'images, dont la finalité est de permettre à un mal-voyant de lire le texte issu d'une image.
 
-2 - poster
-3 - readme
-4 - html
-- for caract in find_and_sort_files(ligne_path): ####### f° a supprimer ne pas oublier 
-- delete all the files in the folder before operating if we say yes i want segmentation
-- del with 'TypeError: cannot unpack non-iterable NoneType object ' coming from 'texte, taux = segmentation_caractere_image(input_image_path)'
+## Objectif
+L'objectif principal de ce projet est de se familiariser avec les techniques de traitement d'image et utiliser les connaissances aquises en cours de Traitement d'images du P2I8 Imagine. D'autre part, cela nous aura permis de découvrir et comprendre l'algorithme de l'OCR.
 
-Tuto server HTML :
-- Installez Flask : 'pip install flask opencv-python pillow'
-- dans le terminal VScode, exécuter : 'python app.py'
-- Aller dans la bibliothèque des fichier de son ordi, et cliquer sur le fichier html
-- Calculer du taux d'erreur 
-- 
+## Fonctionnalités
+- Lecture et traitement d'images
+- Détection de contours et segmentation de caractères
+- Apprentissage automatique pour la reconnaissance de caractères
+- Evaluation des performances de l'algorithme
+- Création d'un image braille, prête à être utilisée sur les machines Laser Trotec du FIMI
+
+## Installation
+1. Cloner ce dépôt :
+   ```bash
+   git clone https://github.com/Klhmt/OCR-to-Braille.git
+
+
+
 

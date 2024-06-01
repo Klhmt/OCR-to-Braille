@@ -14,7 +14,7 @@ def degrade_image(nom, image_path, folder_path):
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
 
-    for i in range(50):
+    for i in range(3):
         degraded_image = np.copy(image)
         applied_alterations = []  # Liste pour stocker les altérations déjà appliquées
         
@@ -63,4 +63,4 @@ def generate_degraded_images(path_original: str, path_degrade: str):
 
 
 if __name__ == 'main' :
-    generate_degraded_images("~/klem/Alphabet/", "~/klem/alphabet_degrade")
+    generate_degraded_images("LETTRES\ARIAL\Alphabet_arial_majuscule", "TEST/degrade")
