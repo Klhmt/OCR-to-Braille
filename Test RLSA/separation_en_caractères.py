@@ -1,7 +1,8 @@
 import cv2
 import numpy as np
+import matplotlib.pyplot as plt
 
-def separe_en_caracteres(image_binary: np.ndarray, indices_debut_fin_ligne: tuple, taux=0.001, seuil_espace_mot=20) -> list:
+def separe_en_caracteres(image_binary: np.ndarray, indices_debut_fin_ligne: tuple, taux=0.001, seuil_espace_mot=15) -> list:
     """
     Description : Prend en entrée une ligne de texte dans une image et renvoie les indices de colonnes de début et de fin de chaque caractère,
                   incluant les espaces entre les mots sous forme de tuples d'indices.
@@ -45,12 +46,12 @@ def separe_en_caracteres(image_binary: np.ndarray, indices_debut_fin_ligne: tupl
     for i in range(1, len(indices)):
         if indices[i] != indices[i - 1] + 1:
             # Ajouter la plage de colonnes pour un caractère
-            ranges.append((start, indices[i - 1]))
+            ranges.append((max(0, start - 2), min(len(h[0]) - 1, indices[i - 1] + 2)))
             # Si l'écart entre deux indices est grand, ajouter un espace pour les mots sous forme de tuple d'indices
             if indices[i] - indices[i - 1] > seuil_espace_mot:
                 ranges.append((indices[i - 1] + 1, indices[i] - 1))  # Ajouter les indices de colonnes vides
             start = indices[i]
-    ranges.append((start, indices[-1]))
+    ranges.append((max(0, start - 2), min(len(h[0]) - 1, indices[-1] + 2)))
 
     return ranges
 
