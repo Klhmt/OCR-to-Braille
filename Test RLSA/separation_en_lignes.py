@@ -10,9 +10,9 @@ def separe_en_lignes(image_binary: np.ndarray, taux=0.001) -> list:
     Les lignes de texte sont identifiées et leurs indices de début et de fin sont retournés.
 
     Exemple :
-    >>> exemple = separe_en_lignes(image)
+    >>> exemple = separe_en_lignes(image_binaire)
     >>> exemple
-    [(0, 21), (25, 65), ...]
+    [(410, 503), (518, 609), (623, 711), (729, 820), ... ]
 
     Input :
     - image_binary (np.ndarray) : une image binarisée (en numpy).
@@ -52,11 +52,11 @@ def separe_en_lignes(image_binary: np.ndarray, taux=0.001) -> list:
     for i in range(1, len(liste_indices_pixels_noirs)):
         # Si l'indice actuel n'est pas consécutif au précédent, une nouvelle plage commence
         if liste_indices_pixels_noirs[i] != liste_indices_pixels_noirs[i - 1] + 1:
-            indices_lignes.append((start, liste_indices_pixels_noirs[i - 1]))
+            indices_lignes.append((start-1, liste_indices_pixels_noirs[i - 1]+1))
             start = liste_indices_pixels_noirs[i]
 
     # Ajouter la dernière plage continue
-    indices_lignes.append((start, liste_indices_pixels_noirs[-1]))
+    indices_lignes.append((start-1, liste_indices_pixels_noirs[-1]+1))
 
     return indices_lignes
 
