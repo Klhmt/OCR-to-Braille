@@ -8,11 +8,14 @@ from skimage.util import img_as_ubyte
 from sklearn.decomposition import PCA
 from sklearn.metrics.pairwise import euclidean_distances
 from sklearn.metrics.pairwise import pairwise_distances_argmin
+from skimage.transform import resize
 from skimage import measure
 import cv2
 import re
 from collections import defaultdict
 from i_taux_erreur import pytesseract_extract_text
+from sklearn.preprocessing import StandardScaler
+
 
 class Character():
     def __init__(self, matrix, description=""):
@@ -47,47 +50,19 @@ class Character():
 
 
     # version 1 modifiée
-    def padding(self, dimensions:tuple = (70, 70)):
-        """Permet d'avoir une matrice de dimensions fixe en ajoutant des 0
-        Codé par Llama 3
-        Non testé si l'array self.matrix est plus grand que dimensions ! Peut être ajouter aussi un downscaling dans ce cas
-        """
-        
-        h, w = self.matrix.shape
-        """
-        if h < dimensions[0] and w > dimensions[1] : 
-            resized_image = cv2.resize(self.matrix, (dimensions[0], h), interpolation=cv2.INTER_AREA)
-        elif h > dimensions[0] and w < dimensions[1] :
-            resized_image = cv2.resize(self.matrix, (w, dimensions[1]), interpolation=cv2.INTER_AREA)
-        elif h > dimensions[0] and w > dimensions[1] :
-            resized_image = cv2.resize(self.matrix, (dimensions[0], dimensions[1]), interpolation=cv2.INTER_AREA)
-        else : 
-            resized_image = self.matrix
-        
-        new_arr = np.zeros(dimensions, dtype=resized_image.dtype)
-        """
-        new_arr = 255*np.ones(dimensions, dtype=self.matrix.dtype)
-        new_arr[:h, :w] = self.matrix
-        self.matrix = new_arr
+    def resize(self, dimensions:tuple = (30, 30)):
+        """Permet de resize l'image pour toujours avoir une même dimension"""
+        self.matrix = resize(self.matrix, dimensions)
     
     def traitement(self):
         self.binarisation()
         self.cadrage()
-        self.padding()
+        self.resize()
     
-    def reduce_dimension(self, pca_instance):
+    def reduce_dimension(self, scaler_instance, pca_instance):
         """A tester. Enregistre le vecteur réduit comme un attribut"""
-        self.reduced_vector = pca_instance.transform(np.array([np.ravel(self.matrix)]))[0]
-    
-    def affiche_matrice(self):
-        """Permet d'afficher la matrice"""
-        plt.imshow(self.matrix, cmap="gray")
-    
-    def get_Hu_moments_v2(self):
-        """From https://scikit-image.org/docs/stable/api/skimage.measure.html#skimage.measure.moments_hu"""
-        mu = measure.moments_central(self.matrix)
-        nu = measure.moments_normalized(mu)
-        return measure.moments_hu(nu)
+        d = scaler_instance.transform(np.array([np.ravel(self.matrix)]))
+        self.reduced_vector = pca_instance.transform(d)[0]
 
 
 class Classifieur():
@@ -96,6 +71,7 @@ class Classifieur():
         self.lettres_references = {}    # Dictionnaire qui associe à un caractère la liste des instances character
         self.reference = {} # Dictionnaire qui associe à un caractère la liste des vecteurs réduits
         self.centers = {}   # Dictionnaire qui associe à un caractère le vecteur moyen des vecteurs réduit de ce caractère
+        self.data_scaler = StandardScaler()
 
                 
     def load_data_degraded(self, folder_path):
@@ -129,6 +105,9 @@ class Classifieur():
     def train(self):
         """Génère le data set et entraîne le PCA"""
         data_set = self.generate_data_set()
+        
+        data_set = self.data_scaler.fit_transform(data_set)
+        
         self.pca.fit(data_set)
 
         for lettre, lst_lettres in self.lettres_references.items():
@@ -156,7 +135,7 @@ class Classifieur():
         unknown.traitement()
 
         # On calcule le vecteur réduit le caractérisant
-        unknown.reduce_dimension(self.pca)
+        unknown.reduce_dimension(self.data_scaler, self.pca)
         
         # On trouve de quel centre il est le plus proche
         Y = np.array([vector for vector in self.centers.values()])
