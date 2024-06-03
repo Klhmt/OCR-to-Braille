@@ -2,76 +2,63 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-def separe_en_lignes(image_binary : np, taux=0.999, reduction=1) -> list :
- 
-    """ 
-    Description : Calcule le taux de pixels blancs présents sur chaque ligne de pixels. 
-                  Sépare ensuite  les lignes de pixels en fonction de leur taux. 
-                  On regarde dans la liste des indices des pixels blancs et si on observe un 'saut', c'est que des lignes de pixels de texte sont là
-                  On stocke donc ces indices, qui correspondent aux indices des lignes de pixel contenant du texte
-                  
-                  Il peut arriver que certaines lignes soit considérées comme tel mais ne sont que des bas de "p" ou des choses du genre,
-                  on va donc fusionner ces minis lignes avec celle de dessus
-
-    Exemple : >>> exemple = separe_en_lignes(image)
-                  exemple = [ (0, 21), (25, 65), ...]
-
-    Input : (image) : une image binarisée en numpy
-            (taux) : un float entre 0 et 1 représentant le nombre de pixels blancs / le nombre de pixels total de la ligne. De base sur 0.98
-            (reduction) : int >= 1, mettre 3 au max sinon possibilité de perte d'informations, indique par quel nombre on divise le nombre de colonnes de l'image pour faire les tests
-            
-    Output : (indices_lignes) : une liste de tuples, chaque tuple les coordonées y de début et de fin de chaque ligne
-
+def separe_en_lignes(image_binary: np.ndarray, taux=0.001, reduction=1, tol=10) -> list:
     """
-    # Listes contenant les indices y des lignes de pixels noirs et blanches (en fonction de leurs taux)
-    liste_indices_pixels_blancs = []
+    Description :
+    Calcule le taux de pixels noirs présents sur chaque ligne de pixels.
+    Sépare ensuite les lignes de pixels en fonction de leur taux et de la tolérance
+    pour détecter les espaces entre les paragraphes.
+
+    Exemple :
+    >>> exemple = separe_en_lignes(image)
+    >>> exemple
+    [(0, 21), (25, 65), ...]
+
+    Input :
+    - image_binary (np.ndarray) : une image binarisée (en numpy).
+    - taux (float) : Un float entre 0 et 1 représentant le nombre de pixels noirs
+                     divisé par le nombre de pixels total de la ligne. Par défaut 0.001.
+    - reduction (int) : Un entier >= 1, indiquant par quel nombre on divise le nombre de colonnes
+                        de l'image pour faire les tests. Par défaut 1.
+    - tol (int) : Tolérance pour détecter les grands espaces entre les lignes de texte,
+                  permettant de distinguer les paragraphes. Par défaut 10.
+
+    Output :
+    - indices_lignes (list) : Une liste de tuples, chaque tuple représentant les
+                              coordonnées y de début et de fin de chaque ligne.
+    """
+
+    # Listes contenant les indices y des lignes de pixels noirs
     liste_indices_pixels_noirs = []
 
-    image_reduite = image_binary[0:len(image_binary), 0:int(len(image_binary)/reduction)]
+    image_reduite = image_binary[0:len(image_binary), 0:int(len(image_binary[0]) / reduction)]
 
-    for i in range(len(image_reduite)) :
+    for i in range(len(image_reduite)):
         ligne_pixel = image_reduite[i]
-        # Calcul du nombre de pixels blancs dans une ligne
-        somme = 0
-        for j in image_reduite[i] :
-            if j == 255 : 
-                somme += 1
-            else : 
-                somme += 0
-        # Calcul du taux de pixels blancs dans la ligne
-        taux_de_blancs = somme/len(ligne_pixel)
-        # Si le taux est > a un certain nombre (0.99 de base) on considère que cette ligne ne contient pas de texte
-        if taux_de_blancs >= taux : #Quasi que des blancs
-            liste_indices_pixels_blancs.append(i)
-        else : 
+        # Calcul du nombre de pixels noirs dans une ligne
+        somme = np.sum(ligne_pixel == 0)
+        # Calcul du taux de pixels noirs dans la ligne
+        taux_de_noirs = somme / len(ligne_pixel)
+        # Si le taux est >= au seuil, on considère que cette ligne contient du texte
+        if taux_de_noirs >= taux:  # Quasi que des noirs
             liste_indices_pixels_noirs.append(i)
 
-    # On regarde dans la liste des indices des pixels blancs et si on observe un 'saut', c'est que des lignes de pixels de texte sont là
-    # On stocke donc ces indices, qui correspondent aux indices des lignes de pixel contenant du texte
+    # Utiliser une tolérance pour détecter les espaces entre les paragraphes
+    diff = np.diff(liste_indices_pixels_noirs)
     indices_lignes = []
-    for i in range(1, len(liste_indices_pixels_blancs)) :
-        if liste_indices_pixels_blancs[i] != liste_indices_pixels_blancs[i-1]+1 :
-            indices_lignes.append((liste_indices_pixels_blancs[i-1]-5, liste_indices_pixels_blancs[i]+5)) 
-    
-    # Amélioration du +-5, chiant si paragraphe, a voir lequel on utilise
-    '''
-    distances_suivant = [int((indices_lignes[i][0]-indices_lignes[i-1][1])/2) for i in range(1, len(indices_lignes))]
-    distances_suivant.append(distances_suivant[-1])
-    moyenne = int(sum(distances_suivant)/len(distances_suivant))
-    for i in range(len(distances_suivant)) :
-        if distances_suivant[i] > moyenne :
-            distances_suivant[i] = moyenne
+    start = liste_indices_pixels_noirs[0]
 
+    for i in range(len(liste_indices_pixels_noirs) - 1):
+        if diff[i] > tol:  # Un grand saut indique un espace de paragraphe
+            indices_lignes.append((start, liste_indices_pixels_noirs[i]))
+            start = liste_indices_pixels_noirs[i + 1]
+        elif diff[i] != 1:  # Une nouvelle ligne de texte commence
+            indices_lignes.append((start, liste_indices_pixels_noirs[i]))
+            start = liste_indices_pixels_noirs[i + 1]
 
-    for i in range(len(indices_lignes)) :
-        if i == 0 :
-            indices_lignes[i] = (indices_lignes[i][0] - distances_suivant[i], indices_lignes[i][1] + distances_suivant[i])
-        elif i == len(indices_lignes) :
-            indices_lignes[i] = (indices_lignes[i][0] - distances_suivant[i-1], indices_lignes[i][1] + distances_suivant[i-1])
-        else :
-            indices_lignes[i] = (indices_lignes[i][0] - distances_suivant[i-1], indices_lignes[i][1] + distances_suivant[i])
-    '''
-    
+    # Ajouter la dernière ligne détectée
+    indices_lignes.append((start, liste_indices_pixels_noirs[-1]))
+
     return indices_lignes
 
 """
