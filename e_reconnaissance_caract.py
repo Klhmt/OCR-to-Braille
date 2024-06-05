@@ -114,7 +114,7 @@ class Classifieur():
             for instance_character in lst_lettres:
                 # On réduit de dimension la matrice du caractère. Le vecteur réduit est stocké dans l'instance
                 # de la classe Character
-                instance_character.reduce_dimension(self.pca)
+                instance_character.reduce_dimension(self.data_scaler, self.pca)
                 
                 # On enregistre dans le dico self.reference
                 self.reference[lettre] = self.reference.get(lettre, [])
