@@ -3,21 +3,13 @@ import random
 import numpy as np
 from skimage import io, transform, util, exposure, filters
 import shutil
-
+from b_segmentation_zones import vider_et_supprimer_dossier
 
 
 def degrade_image(nom, image_path, path_degrade):
     """Génère des images dégradés. Codé par ChatGPT 4o"""
     # Charger l'image en niveaux de gris
     image = io.imread(image_path, as_gray=True)
-    
-    # Si le dossier existe, on le supprime pour repartir de zéro 
-    # if os.path.exists(path_degrade):
-    #     # os.rmdir(folder_path)
-    #     shutil.rmtree(path_degrade)
-    if not os.path.exists(path_degrade):
-        # Créer le dossier s'il n'existe pas
-        os.makedirs(path_degrade)
 
     for i in range(3):
         degraded_image = np.copy(image)
@@ -59,9 +51,23 @@ def degrade_image(nom, image_path, path_degrade):
         io.imsave(os.path.join(path_degrade, image_name), degraded_image, check_contrast=False)
 
 def generate_degraded_images(path_original: str, path_degrade: str):
+
+    # Si le dossier existe, on le supprime pour repartir de zéro 
+    vider_et_supprimer_dossier(path_degrade)
+
+    # Créer le dossier s'il n'existe pas
+    os.makedirs(path_degrade, exist_ok=True)
+
+    # parcours du dossier path_original
     for filename in os.listdir(path_original):
+
+        # s'assurer qu'il s'agit d'une image
         if filename.endswith(".jpg") or filename.endswith(".jpeg") or filename.endswith(".png"):
+
+            # chemin de l'image 
             image_path = os.path.join(path_original, filename)
+
+            # générer des images dégradées, pour chaque image du dossier passé en entrée
             degrade_image(image_path.split(".")[0], image_path, path_degrade)
 
 if __name__=="main":
