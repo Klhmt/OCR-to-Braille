@@ -114,7 +114,7 @@ class Classifieur():
             for instance_character in lst_lettres:
                 # On réduit de dimension la matrice du caractère. Le vecteur réduit est stocké dans l'instance
                 # de la classe Character
-                instance_character.reduce_dimension(self.pca)
+                instance_character.reduce_dimension(self.data_scaler, self.pca)
                 
                 # On enregistre dans le dico self.reference
                 self.reference[lettre] = self.reference.get(lettre, [])
@@ -207,7 +207,7 @@ def reconnaissance_text_image(classifieur) :
         - texte (dict) : le texte reconnu, sous format dictionnaire
         - taux (flaot) : le taux d'erreur de notre algo de reconnaissance par rapport à Pytesseract
     """
-
+    correspondance = {"espace" : " "}
     # on utilise defaultdict pour créer un dictionnaire de dictionnaires
     # utile lorsqu'on a besoin de créer automatiquement des sous-dictionnaires imbriqués 
     # sans vérifier manuellement leur existence.
@@ -238,8 +238,13 @@ def reconnaissance_text_image(classifieur) :
 
                 # identification
                 lettre_identifiee = classifieur.compare(a)
-                print(lettre_identifiee, end='')
-                texte_ligne += lettre_identifiee
+
+                if lettre_identifiee not in correspondance.keys():
+                    print(lettre_identifiee, end='')
+                    texte_ligne += lettre_identifiee
+                else:
+                    print(correspondance[lettre_identifiee], end='')
+                    texte_ligne += correspondance[lettre_identifiee]
                 
                 # calcul taux erreur 
                 caract_pytesseract = pytesseract_extract_text(chemin_image)

@@ -2,17 +2,22 @@ import os
 import random
 import numpy as np
 from skimage import io, transform, util, exposure, filters
+import shutil
 
 
 
-def degrade_image(nom, image_path, folder_path):
+def degrade_image(nom, image_path, path_degrade):
     """Génère des images dégradés. Codé par ChatGPT 4o"""
     # Charger l'image en niveaux de gris
     image = io.imread(image_path, as_gray=True)
     
-    # Créer le dossier s'il n'existe pas
-    if not os.path.exists(folder_path):
-        os.makedirs(folder_path)
+    # Si le dossier existe, on le supprime pour repartir de zéro 
+    # if os.path.exists(path_degrade):
+    #     # os.rmdir(folder_path)
+    #     shutil.rmtree(path_degrade)
+    if not os.path.exists(path_degrade):
+        # Créer le dossier s'il n'existe pas
+        os.makedirs(path_degrade)
 
     for i in range(3):
         degraded_image = np.copy(image)
@@ -51,9 +56,7 @@ def degrade_image(nom, image_path, folder_path):
         
         # Enregistrer l'image dégradée
         image_name = f"{os.path.basename(nom)}_{i+1}.png"
-        io.imsave(os.path.join(folder_path, image_name), degraded_image)
-
-
+        io.imsave(os.path.join(path_degrade, image_name), degraded_image, check_contrast=False)
 
 def generate_degraded_images(path_original: str, path_degrade: str):
     for filename in os.listdir(path_original):
@@ -61,6 +64,5 @@ def generate_degraded_images(path_original: str, path_degrade: str):
             image_path = os.path.join(path_original, filename)
             degrade_image(image_path.split(".")[0], image_path, path_degrade)
 
-
-if __name__ == 'main' :
-    generate_degraded_images("LETTRES\ARIAL\Alphabet_arial_majuscule", "TEST/degrade")
+if __name__=="main":
+    generate_degraded_images("LETTRES\ARIAL\Alphabet_arial_minuscule", "TEST/degrade")

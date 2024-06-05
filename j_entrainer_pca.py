@@ -9,7 +9,7 @@ def genere_image_degradees(path_folder) :
 
     Input : 
         - path_folder (str) : chemin du dossier contenant les images à dégrader
-    Outpul : 
+    Output : 
         - None
     """
     # créer images dégradées 
@@ -17,10 +17,10 @@ def genere_image_degradees(path_folder) :
     # creer un dossier pour le nouvel alphabet dégradé (s'il n'existe pas déjà)
     os.makedirs('TEST/degrade', exist_ok=True)
 
-    c = Classifieur(20)
+    # c = Classifieur(20)
 
     generate_degraded_images(path_folder, 'TEST/degrade')
 
-    c.load_data_degraded('TEST/degrade')
-    c.train()
-    c.generate_center_dict()
+    # c.load_data_degraded('TEST/degrade')
+    # c.train()
+    # c.generate_center_dict()
