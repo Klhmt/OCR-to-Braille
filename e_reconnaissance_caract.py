@@ -253,7 +253,7 @@ def reconnaissance_text_image(classifieur) :
                 # calcul taux erreur 
                 caract_pytesseract = pytesseract_extract_text(chemin_image)
                 nombre_caract+=1
-                if caract_pytesseract == a : 
+                if caract_pytesseract == lettre_identifiee : 
                     caract_identiques +=1
 
             texte_dico[region][ligne]=texte_ligne

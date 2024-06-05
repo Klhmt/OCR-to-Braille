@@ -2,14 +2,14 @@ from a_pretraitement import process_and_straighten_image
 from b_segmentation_zones import segmentation_region, demander_oui_ou_non
 from d_segmentation_caracteres import segmentation_caractere_image
 from e_reconnaissance_caract import reconnaissance_text_image, Classifieur
+from f_genere_caract_degrades import generate_degraded_images
 from g_braille import draw_braille_image
-from j_entrainer_pca import genere_image_degradees
 import os
             
 
 ################################ 0 - Import de l'image  ################################
 
-input_image_path = f'TEST/scan_niv_gris_300ppp_fiche_ocr.bmp'
+input_image_path = 'TEST/test_cas_simple.bmp'
 
 ################################ 1 - Prétraitement ################################
 
@@ -20,7 +20,7 @@ if demander_oui_ou_non('Etape de prétraitement ? ') :
 ################################ 2 - Segmentation zones ################################
 
 if demander_oui_ou_non('Etape de segementation en zones de texte ? '):
-    segmentation_region()
+    segmentation_region('TEST/image_pretraitement.jpg')
 
 ################################ 3 - Segmentaiton caractères  ################################
 
@@ -29,44 +29,27 @@ if demander_oui_ou_non('Etape de segementation en caractères ? '):
     segmentation_caractere_image(input_image_path)
 
 ###################### Entraîner le PCA avec un jeu de données #############################
-"""
-if demander_oui_ou_non('Entraitement du PCA ? '):
 
-    # parcours des alphabets du dossier 'LETTRES/'
-    for alphabet in os.listdir('LETTRES') : 
-
-        print('alphabet : ', alphabet)
-        # parcours des sous-alphabets des alphabets
-        for sous_alphabet in os.listdir(f'LETTRES/{alphabet}') :
-            
-            print('sous-alphabet : ', sous_alphabet)
-            # Filtrer pour ne garder que les sous-dossiers
-            sous_dossiers = [d for d in sous_alphabet if os.path.isdir(os.path.join(f'LETTRES/{alphabet}', d))] 
-
-            genere_image_degradees(f'LETTRES/{alphabet}/{sous_alphabet}')
-"""
 c = Classifieur(10)
 
-if demander_oui_ou_non('Entraitement du PCA ? '):
+demander_entrainement = demander_oui_ou_non('Entraitement du PCA ? ')
 
-    # parcours des alphabets du dossier 'LETTRES/'
-    for sous_alphabet in os.listdir('LETTRES/ARIAL')[0:-1] : 
+# parcours des alphabets du dossier 'LETTRES/'
+for sous_alphabet in os.listdir('LETTRES/ARIAL')[0:-1] : 
 
-        genere_image_degradees(f'LETTRES/ARIAL/{sous_alphabet}', sous_alphabet)
-        c.load_data_degraded(f'LETTRES/ARIAL/{sous_alphabet}')
+    if demander_entrainement : 
+        generate_degraded_images(f'LETTRES/ARIAL/{sous_alphabet}', f'TEST/degrade/{sous_alphabet}')
+    c.load_data_degraded(f'LETTRES/ARIAL/{sous_alphabet}')
 
 c.train()
 c.generate_center_dict()
 
 ################################ Reconnaissance caractères #############################
 
-# J'ai mis ça provisoirement parce que j'avais pas envie de créer un des caractères dégradés de tous les alphabets 
-# mais normalement ça n'a pas ça place ici, c'est juste au dessus qu'on entraine le pca
-
-
 if demander_oui_ou_non('Reconnaissance caractères ? '):
     texte, taux = reconnaissance_text_image(c)
-    print(taux)
+    print()
+    print('taux : ', taux)
 
 ################################ Conversion Braille #############################
 
