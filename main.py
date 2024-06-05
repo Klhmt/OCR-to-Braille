@@ -45,21 +45,15 @@ if demander_oui_ou_non('Entraitement du PCA ? '):
 
             genere_image_degradees(f'LETTRES/{alphabet}/{sous_alphabet}')
 """
+c = Classifieur(10)
+
 if demander_oui_ou_non('Entraitement du PCA ? '):
 
     # parcours des alphabets du dossier 'LETTRES/'
-    print(os.listdir('LETTRES/ARIAL')[0:-1])
     for sous_alphabet in os.listdir('LETTRES/ARIAL')[0:-1] : 
 
-        
-        print('sous-alphabet : ', sous_alphabet)
-        # Filtrer pour ne garder que les sous-dossiers
-        # sous_dossiers = [d for d in sous_alphabet if os.path.isdir(os.path.join(f'LETTRES/ARIAL', d))] 
-
-        genere_image_degradees(f'LETTRES/ARIAL/{sous_alphabet}')
-
-c = Classifieur(10)
-c.load_data_degraded("TEST/degrade")
+        genere_image_degradees(f'LETTRES/ARIAL/{sous_alphabet}', sous_alphabet)
+        c.load_data_degraded(f'LETTRES/ARIAL/{sous_alphabet}')
 
 c.train()
 c.generate_center_dict()
@@ -72,6 +66,7 @@ c.generate_center_dict()
 
 if demander_oui_ou_non('Reconnaissance caractères ? '):
     texte, taux = reconnaissance_text_image(c)
+    print(taux)
 
 ################################ Conversion Braille #############################
 

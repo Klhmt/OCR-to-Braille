@@ -62,6 +62,7 @@ def generate_degraded_images(path_original: str, path_degrade: str):
     for filename in os.listdir(path_original):
         if filename.endswith(".jpg") or filename.endswith(".jpeg") or filename.endswith(".png"):
             image_path = os.path.join(path_original, filename)
+            print(image_path)
             degrade_image(image_path.split(".")[0], image_path, path_degrade)
 
 if __name__=="main":
