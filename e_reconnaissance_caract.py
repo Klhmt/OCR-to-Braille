@@ -74,13 +74,9 @@ class Classifieur():
             if filename.endswith(('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tif')):
                 img_path = os.path.join(folder_path, filename)
                 img = imread(img_path, as_gray=True)
-                # Extraction de la partie du nom avant le premier underscore, en respectant la casse
-                key = filename.split(".")[0].split("_")[0]
                 # On ajoute dans le dictionnaire
-                if key not in self.lettres_references:
-                    self.lettres_references[key] = []
-                self.lettres_references[key].append(Character(img, filename.split(".")[0]))
-
+                self.lettres_references[filename.split(".")[0].split("_")[0]] = self.lettres_references.get(filename.split(".")[0], [])
+                self.lettres_references[filename.split(".")[0].split("_")[0]].append(Character(img, filename.split(".")[0]))
 
         # Pour toutes les lettres, on effectue le traitement
         for lst_lettres in self.lettres_references.values():
@@ -280,10 +276,10 @@ def reconnaissance_text_image_plus_comparaison_pytesseract(classifieur) :
                     texte_ligne += correspondance[lettre_identifiee]
                 
                 # calcul taux erreur 
-                caract_pytesseract = pytesseract_extract_text(chemin_image)
-                nombre_caract+=1
-                if caract_pytesseract == a : 
-                    caract_identiques +=1
+                # caract_pytesseract = pytesseract_extract_text(chemin_image)
+                # nombre_caract+=1
+                # if caract_pytesseract == a : 
+                #     caract_identiques +=1
 
             # texte_dico[region][ligne]=texte_ligne
 
