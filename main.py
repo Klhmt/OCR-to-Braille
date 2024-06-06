@@ -20,7 +20,7 @@ if demander_oui_ou_non('Etape de prétraitement ? ') :
 ################################ 2 - Segmentation zones ################################
 
 if demander_oui_ou_non('Etape de segementation en zones de texte ? '):
-    segmentation_region()
+    segmentation_region(output_image_path)
 
 ################################ 3 - Segmentaiton caractères  ################################
 
