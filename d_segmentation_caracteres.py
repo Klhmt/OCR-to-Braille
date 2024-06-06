@@ -202,4 +202,3 @@ def segmentation_caractere_image(input_image_path) :
                 
             count_ligne+=1
         count_region+=1
-    

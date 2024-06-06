@@ -19,7 +19,7 @@ def degrade_image(nom, image_path, path_degrade):
         # Créer le dossier s'il n'existe pas
         os.makedirs(path_degrade)
 
-    for i in range(3):
+    for i in range(20):
         degraded_image = np.copy(image)
         applied_alterations = []  # Liste pour stocker les altérations déjà appliquées
         

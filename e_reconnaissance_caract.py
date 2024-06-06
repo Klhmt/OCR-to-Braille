@@ -23,15 +23,9 @@ class Character():
         self.description = description
         self.reduced_vector = None
         
-    def resize(self, width:int = 20):
-        """Resize en fonction d'une seule dimension seulement"""
-        # Calculer la nouvelle largeur pour préserver les proportions
-        aspect_ratio = self.matrix.shape[1] / self.matrix.shape[0]
-        new_height = int(width * aspect_ratio)
-        
-        scaled_image = transform.resize(self.matrix, (new_height, width), preserve_range=True)
-        
-        self.matrix = (scaled_image).astype(np.uint8)
+    def resize(self, dimensions:tuple = (30, 30)):
+        """Permet de resize l'image pour toujours avoir une même dimension"""
+        self.matrix = resize(self.matrix, dimensions)
     
     def binarisation(self):
         thresh = threshold_otsu(self.matrix)
@@ -47,12 +41,6 @@ class Character():
         ymin, ymax = np.where(rows)[0][[0, -1]]
         xmin, xmax = np.where(cols)[0][[0, -1]]
         self.matrix = self.matrix[ymin:ymax+1, xmin:xmax+1]
-
-
-    # version 1 modifiée
-    def resize(self, dimensions:tuple = (30, 30)):
-        """Permet de resize l'image pour toujours avoir une même dimension"""
-        self.matrix = resize(self.matrix, dimensions)
     
     def traitement(self):
         self.binarisation()
@@ -60,8 +48,9 @@ class Character():
         self.resize()
     
     def reduce_dimension(self, scaler_instance, pca_instance):
-        """A tester. Enregistre le vecteur réduit comme un attribut"""
-        d = scaler_instance.transform(np.array([np.ravel(self.matrix)]))
+        """Enregistre le vecteur réduit comme un attribut"""
+        #d = scaler_instance.transform(np.array([np.ravel(self.matrix)]))
+        d = np.array([np.ravel(self.matrix)])
         self.reduced_vector = pca_instance.transform(d)[0]
 
 
@@ -106,7 +95,7 @@ class Classifieur():
         """Génère le data set et entraîne le PCA"""
         data_set = self.generate_data_set()
         
-        data_set = self.data_scaler.fit_transform(data_set)
+        #data_set = self.data_scaler.fit_transform(data_set)
         
         self.pca.fit(data_set)
 
@@ -195,9 +184,49 @@ def tri_images_dossier_caracteres():
 
     return images_dict
 
-
-
 def reconnaissance_text_image(classifieur) : 
+    """
+    Exécute l'algo de reconnaissance de caractères sur toute l'image. Affiche le résultat de la reconnaissance
+
+    Input : 
+        - input_image_path : le chemin de l'image d'entrée.
+
+    """
+    correspondance = {"espace" : " "}
+
+    images_dict = tri_images_dossier_caracteres()
+
+    # parcours des régions
+    for region in sorted(images_dict): 
+        print()
+        print('-------------------------------------------------------------')
+        print(f"Région {region}:")
+
+        # parcours des lignes
+        for ligne in sorted(images_dict[region]):
+            print()
+            print(f"  Ligne {ligne}:")
+
+            texte_ligne = ''
+            # parcours des caractères
+            for caract_count, chemin_image in images_dict[region][ligne]:
+                # Ouverture d'une lettre
+                im = cv2.imread(chemin_image, cv2.IMREAD_GRAYSCALE)
+                a = Character(im, "")
+                a.traitement()
+
+                # identification
+                lettre_identifiee = classifieur.compare(a)
+
+                if lettre_identifiee not in correspondance.keys():
+                    print(lettre_identifiee, end='')
+                    texte_ligne += lettre_identifiee
+                else:
+                    print(correspondance[lettre_identifiee], end='')
+                    texte_ligne += correspondance[lettre_identifiee]
+
+
+def reconnaissance_text_image_plus_comparaison_pytesseract(classifieur) : 
     """
     Exécute l'algo de reconnaissance de caractères sur toute l'image
 
@@ -247,15 +276,15 @@ def reconnaissance_text_image(classifieur) :
                     texte_ligne += correspondance[lettre_identifiee]
                 
                 # calcul taux erreur 
-                caract_pytesseract = pytesseract_extract_text(chemin_image)
-                nombre_caract+=1
-                if caract_pytesseract == a : 
-                    caract_identiques +=1
+                # caract_pytesseract = pytesseract_extract_text(chemin_image)
+                # nombre_caract+=1
+                # if caract_pytesseract == a : 
+                #     caract_identiques +=1
 
-            texte_dico[region][ligne]=texte_ligne
+            # texte_dico[region][ligne]=texte_ligne
 
-    taux = caract_identiques/nombre_caract
-    return texte_dico, taux
+    # taux = caract_identiques/nombre_caract
+    # return texte_dico, taux
 
 if __name__=="main" : 
     c = Classifieur(20)
