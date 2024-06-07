@@ -11,7 +11,7 @@ def degrade_image(nom, image_path, path_degrade):
     # Charger l'image en niveaux de gris
     image = io.imread(image_path, as_gray=True)
 
-    for i in range(20):
+    for i in range(10):
         degraded_image = np.copy(image)
         applied_alterations = []  # Liste pour stocker les altérations déjà appliquées
         
