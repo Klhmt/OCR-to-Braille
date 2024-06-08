@@ -141,7 +141,7 @@ def separe_en_lignes_v0(image_binary : np, taux=0.999, reduction=1) -> list :
 
 if __name__=="__main__" :
 
-    image = cv2.imread('TEST\image.jpg')
+    image = cv2.imread('Images\image.jpg')
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     (thresh, image_binary) = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 

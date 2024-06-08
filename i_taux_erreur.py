@@ -35,7 +35,7 @@ def pytesseract_extract_text(image_path):
     return char
 
 if __name__ == "main":
-    text = pytesseract_extract_text("TEST/caracteres/region1_ligne1_3.bmp")
+    text = pytesseract_extract_text("Images/caracteres/region1_ligne1_3.bmp")
     print(text)
 
 

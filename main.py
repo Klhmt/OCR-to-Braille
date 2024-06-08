@@ -14,7 +14,7 @@ input_image_path = f'test_cas_simple.bmp'
 ################################ 1 - Prétraitement ################################
 
 if demander_oui_ou_non('Etape de prétraitement ? ') : 
-    output_image_path = 'TEST/image_pretraitement.jpg'
+    output_image_path = 'Images/image_pretraitement.jpg'
     process_and_straighten_image(input_image_path, output_image_path)
 
 ################################ 2 - Segmentation zones ################################

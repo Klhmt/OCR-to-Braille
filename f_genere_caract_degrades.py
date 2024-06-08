@@ -71,4 +71,4 @@ def generate_degraded_images(path_original: str, path_degrade: str):
             degrade_image(image_path.split(".")[0], image_path, path_degrade)
 
 if __name__=="main":
-    generate_degraded_images("LETTRES\ARIAL\Alphabet_arial_minuscule", "TEST/degrade")
+    generate_degraded_images("LETTRES\ARIAL\Alphabet_arial_minuscule", "Images/degrade")

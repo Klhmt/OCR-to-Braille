@@ -134,14 +134,14 @@ def separe_en_caracteres(image_binary, indices_debut_fin_ligne: tuple, taux=0.00
 
 def nom_images_des_regions() : 
     """
-    Parcours le dossier 'TEST/caracteres' et ne récupère que les images qui ont un nom de la forme 'region{nb_region}.bmp 
+    Parcours le dossier 'Images/caracteres' et ne récupère que les images qui ont un nom de la forme 'region{nb_region}.bmp 
 
     Output : 
         - regions (list) : une liste des noms des images correspondant aux régions
     """
 
     # Chemin du dossier à parcourir
-    dossier = 'TEST/caracteres'
+    dossier = 'Images/caracteres'
 
     # Expression régulière pour matcher les noms de fichiers de la forme 'region{nb_region}.bmp'
     pattern = re.compile(r'region\d+\.bmp')
@@ -160,7 +160,7 @@ def nom_images_des_regions() :
 
 def segmentation_caractere_image(input_image_path) :
     """
-    Extrait tous les caractères d'une image. Création d'images matricielles au format bitmap entregistrées sous TEST/caracteres
+    Extrait tous les caractères d'une image. Création d'images matricielles au format bitmap entregistrées sous Images/caracteres
 
     Input : 
         - input_image_path (str) : Chemin de l'image d'entrée
@@ -173,7 +173,7 @@ def segmentation_caractere_image(input_image_path) :
     chemin_regions = nom_images_des_regions()
     count_region = 1
 
-    # parcours du dossier 'TEST/caracteres', à la recherche des images correpondant au zones de texte.
+    # parcours du dossier 'Images/caracteres', à la recherche des images correpondant au zones de texte.
     for chemin_region in chemin_regions : 
 
         # Définition de l'image
@@ -197,7 +197,7 @@ def segmentation_caractere_image(input_image_path) :
                 caract = image_region[indices_debut_fin_ligne[0]:indices_debut_fin_ligne[1], elt[0]:elt[1]]
 
                 # Sauvegarder l'image en format matriciel (bitmap)
-                cv2.imwrite(f'TEST/caracteres/region{count_region}_ligne{count_ligne}_{count_caract}.bmp', caract)
+                cv2.imwrite(f'Images/caracteres/region{count_region}_ligne{count_ligne}_{count_caract}.bmp', caract)
                 count_caract+=1
                 
             count_ligne+=1

@@ -70,7 +70,7 @@ def segmentation_region(input_image_path):
     Output : 
         - None
     """
-    vider_et_supprimer_dossier('TEST/caracteres')  # Vider et supprimer le dossier de sortie
+    vider_et_supprimer_dossier('Images/caracteres')  # Vider et supprimer le dossier de sortie
     bw = cv2.imread(input_image_path, cv2.IMREAD_GRAYSCALE)  # Lire l'image en niveaux de gris
 
     # Redimensionner l'image
@@ -131,10 +131,10 @@ def segmentation_region(input_image_path):
         region_rectangulaire = bw[min_row:max_row, min_col:max_col] 
 
         # Création du dossier s'il n'existe pas déjà
-        os.makedirs(f'TEST/caracteres', exist_ok=True)
+        os.makedirs(f'Images/caracteres', exist_ok=True)
 
         # Sauvegarder l'image traitée
-        cv2.imwrite(f'TEST/caracteres/region{count}.bmp', region_rectangulaire)
+        cv2.imwrite(f'Images/caracteres/region{count}.bmp', region_rectangulaire)
         count += 1
 
 if __name__== "main" : 

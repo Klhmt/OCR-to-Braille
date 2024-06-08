@@ -15,6 +15,6 @@ def genere_image_degradees(path_folder, sous_alphabet) :
     # créer images dégradées 
 
     # creer un dossier pour le nouvel alphabet dégradé (s'il n'existe pas déjà)
-    os.makedirs('TEST/degrade', exist_ok=True)
+    os.makedirs('Images/degrade', exist_ok=True)
 
-    generate_degraded_images(path_folder, os.path.join('TEST/degrade', sous_alphabet))
+    generate_degraded_images(path_folder, os.path.join('Images/degrade', sous_alphabet))

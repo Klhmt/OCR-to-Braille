@@ -138,7 +138,7 @@ class Classifieur():
 
 def tri_images_dossier_caracteres():
     """
-    parcourt toutes les images du dossier TEST/caracteres et ne garde que celles dont le nom 
+    parcourt toutes les images du dossier Images/caracteres et ne garde que celles dont le nom 
     est de la forme region{region_count}_ligne{ligne_count}_{caract_count}.bmp, 
     puis les trie par région et par ligne
 
@@ -149,7 +149,7 @@ def tri_images_dossier_caracteres():
     """
 
     # Chemin du dossier à parcourir
-    dossier = 'TEST/caracteres'
+    dossier = 'Images/caracteres'
 
     # Expression régulière pour matcher les noms de fichiers de la forme 'region{region_count}_ligne{ligne_count}_{caract_count}.bmp'
     pattern = re.compile(r'region(\d+)_ligne(\d+)_(\d+)\.bmp')
