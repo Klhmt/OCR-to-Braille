@@ -28,7 +28,7 @@ def degrade_image(nom, image_path, path_degrade):
                 #degraded_image = transform.swirl(degraded_image, rotation=random.uniform(0, 2*np.pi/50))
                 pass
             elif choice == 'étirement':
-                factor = random.uniform(0.8, 1.2)
+                factor = random.uniform(0.9, 1.1)
                 degraded_image = transform.rescale(degraded_image, scale=(factor, factor))
             elif choice == 'rotation':
                 angle = random.uniform(-2, 2)  # Réduire l'amplitude de la rotation

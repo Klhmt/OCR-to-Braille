@@ -9,7 +9,7 @@ import os
 
 ################################ 0 - Import de l'image  ################################
 
-input_image_path = f'test_cas_simple.bmp'
+input_image_path = r'test_cas_simple.bmp'
 
 ################################ 1 - Prétraitement ################################
 
@@ -52,13 +52,11 @@ if demander_oui_ou_non('Reconnaissance caractères ? '):
 
     c.train()
     c.generate_center_dict()
-    reconnaissance_text_image(c)
+    texte = reconnaissance_text_image(c)
 
 ################################ Conversion Braille #############################
 
 if demander_oui_ou_non('Création des images Braille ? '):
-    for region in texte:
-        for ligne in region:
-            for texte_ligne in ligne:
-                draw_braille_image(texte, "Test_folder/braille_image.jpg") # changer en .png si erreur 
+    for _ in range(len(texte)):
+        draw_braille_image(texte[_], f"Braille/braille_ligne_{_}.jpg") # changer en .png si erreur 
 

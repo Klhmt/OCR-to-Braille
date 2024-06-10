@@ -196,6 +196,8 @@ def reconnaissance_text_image(classifieur) :
 
     images_dict = tri_images_dossier_caracteres()
 
+    full_texte = []
+
     # parcours des régions
     for region in sorted(images_dict): 
         print()
@@ -224,7 +226,8 @@ def reconnaissance_text_image(classifieur) :
                 else:
                     print(correspondance[lettre_identifiee], end='')
                     texte_ligne += correspondance[lettre_identifiee]
-
+            full_texte.append(texte_ligne)
+    return full_texte
 
 def reconnaissance_text_image_plus_comparaison_pytesseract(classifieur) : 
     """

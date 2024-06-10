@@ -29,7 +29,6 @@ def compute_skew(image):
 def process_and_straighten_image(image_path, output_path):
     # Lire l'image depuis le fichier
     image = cv2.imread(image_path)
-    
     # Calculer l'angle de redressement
     angle = compute_skew(image)
     
