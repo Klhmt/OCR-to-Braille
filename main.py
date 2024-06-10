@@ -48,7 +48,7 @@ if demander_oui_ou_non('Reconnaissance caractères ? '):
     c = Classifieur(30)
     
     for sous_alphabet in os.listdir('LETTRES/ARIAL')[0:-1] :
-        c.load_data_degraded(f"LETTRES/ARIAL/{sous_alphabet}")
+        c.load_data_degraded(f"Images/degrade/{sous_alphabet}")
 
     c.train()
     c.generate_center_dict()

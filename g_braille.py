@@ -2,7 +2,7 @@
 from PIL import Image, ImageDraw
 
 # Définition de la taille des points braille dans l'image
-POINT_SIZE = 500
+POINT_SIZE = 10
 
 # Définition de la taille de la grille braille (2x3)
 GRID_WIDTH = 2 * POINT_SIZE
