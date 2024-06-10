@@ -17,6 +17,9 @@ L'objectif principal de ce projet est de se familiariser avec les techniques de 
 1. Cloner ce dépôt :
    ```bash
    git clone https://github.com/Klhmt/OCR-to-Braille.git
+   ```
+
+2. Lancer le fichier ```main.py```
 
 
 
