@@ -13,7 +13,8 @@ L'objectif principal de ce projet est de se familiariser avec les techniques de 
 - Evaluation des performances de l'algorithme
 - Création d'un image braille, prête à être utilisée sur les machines Laser Trotec du FIMI
 
-## Installation
+## Installation & usage
+
 1. Cloner ce dépôt :
    ```bash
    git clone https://github.com/Klhmt/OCR-to-Braille.git
@@ -21,6 +22,10 @@ L'objectif principal de ce projet est de se familiariser avec les techniques de 
 
 2. Lancer le fichier ```main.py```
 
+3. Pour changer l'image à océriser :
+  - Ouvrir le fichier ```main.py```
+  - Modifier la variable `input_image_path` => mettre le chemin vers la nouvelle image à océriser
 
+## Limitation
 
-
+Problème rencontré avec Qt sur une machine Linux (Fedora 40, Wayland) pour l'affichage graphique pour l'étape de visualisation des régions de l'image 
